@@ -23,9 +23,9 @@ http.createServer(function (request, response)
         response.writeHead(200, {'Content-Type':'application/rss+xml'});
         processquery(region, realm, character, response);
     }
-}).listen(8080);
+}).listen(12493);
 
-console.log('Server running at http://localhost:8080/');
+console.log('Server running at http://localhost:12493/');
 
 function processitem(item)
 {
