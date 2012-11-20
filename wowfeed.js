@@ -50,17 +50,17 @@ function processitem(item)
     {
         case ("ACHIEVEMENT"):
             rss.title = item.achievement.title;
-            rss.description = "Earned the achievement '" + item.achievement.description +"' for " + item.achievement.points +" points.";
+            rss.description = "Earned the achievement <strong>" + item.achievement.description +"</strong> for " + item.achievement.points +" points.";
             break;
 
         case ("CRITERIA"):
             rss.title = item.achievement.title;
-            rss.description = "Completed step '" + item.criteria.description + "' of achievement '" + item.achievement.description +"'.";
+            rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement <strong>" + item.achievement.description +"</strong>";
             break;
 
         case ("LOOT"):
             rss.title = "Loot";
-            rss.description = "Obtained '" + item.itemId +"'.";
+            rss.description = "Obtained  <strong>" + item.itemId +"</strong>";
             break;
 
         case ("BOSSKILL"):
@@ -70,27 +70,27 @@ function processitem(item)
 
         case ("playerAchievement"):
             rss.title = item.achievement.title;
-            rss.description = item.character + " earned the achievement '" + item.achievement.title + "' for " + item.achievement.points + "points.";
+            rss.description = item.character + " earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
             break;
 
         case ("itemPurchase"):
             rss.title = "Item purchased";
-            rss.description = item.character + " purchased item " + item.itemId;
+            rss.description = item.character + " purchased item  <strong>" + item.itemId + "</strong>";
             break;
 
         case ("itemLoot"):
             rss.title = "Item looted";
-            rss.description = item.character + " obtained item " + item.itemId;
+            rss.description = item.character + " obtained item  <strong>" + item.itemId + "</strong>";
             break;
 
         case ("itemCraft"):
             rss.title = "Item crafted";
-            rss.description = item.character + " crafted item " + item.itemId;
+            rss.description = item.character + " crafted item  <strong>" + item.itemId + "</strong>";
             break;
 
         case ("guildAchievement"):
             rss.title = item.achievement.title;
-            rss.description = "The guild earned the achievement '"+ item.achievement.title + "' for " + item.achievement.points + "points.";
+            rss.description = "The guild earned the achievement <strong>"+ item.achievement.title + "</strong> for " + item.achievement.points + " points.";
             break;
 
         default:
