@@ -4,6 +4,8 @@ var http = require('http'),
     qs = require('querystring'),
     htmlparser = require('htmlparser');
 
+var port = process.env.PORT || 3000;
+
 /////////// Create and start the server to handle requests
 http.createServer(function (request, response)
 {
@@ -23,9 +25,9 @@ http.createServer(function (request, response)
         response.writeHead(200, {'Content-Type':'application/rss+xml'});
         processquery(region, realm, character, response);
     }
-}).listen(12493);
+}).listen(port);
 
-console.log('Server running at http://localhost:12493/');
+console.log('Server running at http://localhost:'+port);
 
 function processitem(item)
 {
