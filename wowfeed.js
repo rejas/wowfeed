@@ -113,6 +113,14 @@ function process_char_query(region, realm, character, responseObj) {
                 // Parse JSON we get from blizzard
                 var js = JSON.parse(dom[0].data);
 
+                if (js.status)
+                {
+                    responseObj.writeHead(200, {'Content-Type': 'text/html'});
+                    responseObj.write(js.status + ": " + js.reason);
+                    responseObj.end();
+                    return;
+                }
+
                 var outstandingCalls = js.feed.length;
                 var arr = [];
 
@@ -178,6 +186,14 @@ function process_guild_query(region, realm, guild, responseObj) {
 
             // Parse JSON we get from blizzard
             var js = JSON.parse(dom[0].data);
+
+            if (js.status)
+            {
+                responseObj.writeHead(200, {'Content-Type': 'text/html'});
+                responseObj.write(js.status + ": " + js.reason);
+                responseObj.end();
+                return;
+            }
 
             var outstandingCalls = js.news.length;
             var arr = [];
