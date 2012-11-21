@@ -94,57 +94,57 @@ function sortRSS(a, b) {
 function process_char_query(region, realm, character, responseObj) {
     var options = {
         host: region + '.battle.net',
-        path: '/api/wow/character/' + realm + '/' + character + '?fields=feed'
+        path: encodeURI('/api/wow/character/' + realm + '/' + character + '?fields=feed')
     };
 
-        console.log("Fetching " + options.host+ options.path);
+    console.log("Fetching " + options.host+ options.path);
 
-        var handler = new htmlparser.DefaultHandler(function (error, dom) {
-            if (!error) {
-                ///////////// Generate RSS feed
-                var feed = new rss({
-                    title: 'RSS feed for ' + character + ' on ' + realm,
-                    description: 'RSS feed generated from blizzards json feed-api',
-                    feed_url: 'http://' + options.host + options.path,
-                    site_url: 'http://' + options.host + '/wow/character/' + realm + '/' + character + '/feed',
-                    author: 'rejas'
-                });
+    var handler = new htmlparser.DefaultHandler(function (error, dom) {
+        if (!error) {
+            ///////////// Generate RSS feed
+            var feed = new rss({
+                title: 'RSS feed for ' + character + ' on ' + realm,
+                description: 'RSS feed generated from blizzards json feed-api',
+                feed_url: 'http://' + options.host + options.path,
+                site_url: 'http://' + options.host + '/wow/character/' + realm + '/' + character + '/feed',
+                author: 'rejas'
+            });
 
-                // Parse JSON we get from blizzard
-                var js = JSON.parse(dom[0].data);
+            // Parse JSON we get from blizzard
+            var js = JSON.parse(dom[0].data);
 
-                if (js.status)
-                {
-                    responseObj.writeHead(200, {'Content-Type': 'text/html'});
-                    responseObj.write(js.status + ": " + js.reason);
-                    responseObj.end();
-                    return;
-                }
-
-                var outstandingCalls = js.feed.length;
-                var arr = [];
-
-                // Loop over data and add to feed
-                js.feed.forEach(function (item) {
-                    processitem(item, function (err, res) {
-                        arr.push(res);
-                        outstandingCalls--;
-                        if (outstandingCalls == 0) {
-                            arr.sort(sortRSS);
-                            feed.items = arr;
-                            //Print the RSS feed out as response
-                            responseObj.write(feed.xml());
-                            responseObj.end();
-                        }
-                    });
-                });
+            if (js.status)
+            {
+                responseObj.writeHead(200, {'Content-Type': 'text/html'});
+                responseObj.write(js.status + ": " + js.reason);
+                responseObj.end();
+                return;
             }
-        });
-        var html_parser = new htmlparser.Parser(handler);
 
-        var req = http.request(options, function (res) {
-            //console.log('STATUS: ' + res.statusCode);
-            //console.log('HEADERS: ' + JSON.stringify(res.headers));
+            var outstandingCalls = js.feed.length;
+            var arr = [];
+
+            // Loop over data and add to feed
+            js.feed.forEach(function (item) {
+                processitem(item, function (err, res) {
+                    arr.push(res);
+                    outstandingCalls--;
+                    if (outstandingCalls == 0) {
+                        arr.sort(sortRSS);
+                        feed.items = arr;
+                        //Print the RSS feed out as response
+                        responseObj.write(feed.xml());
+                        responseObj.end();
+                    }
+                });
+            });
+        }
+    });
+    var html_parser = new htmlparser.Parser(handler);
+
+    var req = http.request(options, function (res) {
+        //console.log('STATUS: ' + res.statusCode);
+        //console.log('HEADERS: ' + JSON.stringify(res.headers));
 
         var alldata = "";
         res.on('data', function (chunk) {
@@ -168,7 +168,8 @@ function process_char_query(region, realm, character, responseObj) {
 function process_guild_query(region, realm, guild, responseObj) {
     var options = {
         host: region + '.battle.net',
-        path: '/api/wow/guild/' + realm + '/' + guild + '?fields=news'
+        path: encodeURI('/api/wow/guild/' + realm + '/' + guild + '?fields=news'),
+        encoding:     'utf-8'
     };
 
     console.log("Fetching " + options.host+ options.path);
