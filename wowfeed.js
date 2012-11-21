@@ -1,15 +1,16 @@
 var http = require('http'),
     rss = require('rss'),
     url = require('url'),
+    armory = require('armory'),
     htmlparser = require('htmlparser');
 
 var port = process.env.PORT || 3000;
 
-function processitem(item) {
+function processitem(item, callback) {
+
     var rss = {};
     rss.date = item.timestamp;
     rss.categories = [item.type];
-    rss.description = 'todo desc';
     rss.title = item.type;
     rss.guid = 0;
     rss.author = 'todo author';
@@ -17,57 +18,77 @@ function processitem(item) {
 
     switch (item.type) {
 
-    case ("ACHIEVEMENT"):
-        rss.title = item.achievement.title;
-        rss.description = "Earned the achievement <strong>" + item.achievement.description + "</strong> for " + item.achievement.points + " points.";
-        break;
+        case ("ACHIEVEMENT"):
+            rss.title = item.achievement.title;
+            rss.description = "Earned the achievement <strong>" + item.achievement.description + "</strong> for " + item.achievement.points + " points.";
+            callback(this, rss);
+            break;
 
-    case ("CRITERIA"):
-        rss.title = item.achievement.title;
-        rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement <strong>" + item.achievement.description + "</strong>";
-        break;
+        case ("CRITERIA"):
+            rss.title = item.achievement.title;
+            rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement <strong>" + item.achievement.description + "</strong>";
+            callback(this, rss);
+            break;
 
-    case ("LOOT"):
-        rss.title = "Loot";
-        rss.description = "Obtained  <strong>" + item.itemId + "</strong>";
-        break;
+        case ("LOOT"):
+            rss.title = "Loot";
+            armory.item(item.itemId, function(err, res) {
+                rss.description = "Obtained  <strong>" + res.name + "</strong>";
+                callback(this, rss);
+            });
+            break;
 
-    case ("BOSSKILL"):
-        rss.title = item.name;
-        rss.description = item.quantity + " " + item.achievement.title;
-        break;
+        case ("BOSSKILL"):
+            rss.title = item.name;
+            rss.description = item.quantity + " " + item.achievement.title;
+            callback(this, rss);
+            break;
 
-    case ("playerAchievement"):
-        rss.title = item.achievement.title;
-        rss.description = item.character + " earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
-        break;
+        case ("playerAchievement"):
+            rss.title = item.achievement.title;
+            rss.description = item.character + " earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
+            callback(this, rss);
+            break;
 
-    case ("itemPurchase"):
-        rss.title = "Item purchased";
-        rss.description = item.character + " purchased item  <strong>" + item.itemId + "</strong>";
-        break;
+        case ("itemPurchase"):
+            rss.title = "Item purchased";
+            armory.item(item.itemId, function(err, res) {
+                rss.description = item.character + " purchased item  <strong>" + res.name + "</strong>";
+                callback(this, rss);
+            });
+            break;
 
-    case ("itemLoot"):
-        rss.title = "Item looted";
-        rss.description = item.character + " obtained item  <strong>" + item.itemId + "</strong>";
-        break;
+        case ("itemLoot"):
+            rss.title = "Item looted";
+            armory.item(item.itemId, function(err, res) {
+                rss.description = item.character + " obtained item  <strong>" + res.name + "</strong>";
+                callback(this, rss);
+            });
+            break;
 
-    case ("itemCraft"):
-        rss.title = "Item crafted";
-        rss.description = item.character + " crafted item  <strong>" + item.itemId + "</strong>";
-        break;
+        case ("itemCraft"):
+            rss.title = "Item crafted";
+            armory.item(item.itemId, function(err, res) {
+                rss.description = item.character + " crafted item  <strong>" + res.name + "</strong>";
+                callback(this, rss);
+            });
+            break;
 
-    case ("guildAchievement"):
-        rss.title = item.achievement.title;
-        rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
-        break;
+        case ("guildAchievement"):
+            rss.title = item.achievement.title;
+            rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
+            callback(this, rss);
+            break;
 
-    default:
-        console.log("Unhandled type: " + item.type);
-        break;
+        default:
+            console.log("Unhandled type: " + item.type);
+            callback(this, rss);
+            break;
     }
+}
 
-    return rss;
+function sortRSS(a, b) {
+    return (b.date - a.date);
 }
 
 function process_char_query(region, realm, character, responseObj) {
@@ -76,35 +97,46 @@ function process_char_query(region, realm, character, responseObj) {
         path: '/api/wow/character/' + realm + '/' + character + '?fields=feed'
     };
 
-    var handler = new htmlparser.DefaultHandler(function (error, dom) {
-        if (!error) {
-            ///////////// Generate RSS feed
-            var feed = new rss({
-                title: 'RSS feed for ' + character + ' on ' + realm,
-                description: 'RSS feed generated from blizzards json feed-api',
-                feed_url: 'http://' + options.host + options.path,
-                site_url: 'http://' + options.host + '/wow/character/' + realm + '/' + character + '/feed',
-                author: 'rejas'
-            });
+        console.log("Fetching " + options.host+ options.path);
 
-            // Parse JSON we get from blizzard
-            var js = JSON.parse(dom[0].data);
+        var handler = new htmlparser.DefaultHandler(function (error, dom) {
+            if (!error) {
+                ///////////// Generate RSS feed
+                var feed = new rss({
+                    title: 'RSS feed for ' + character + ' on ' + realm,
+                    description: 'RSS feed generated from blizzards json feed-api',
+                    feed_url: 'http://' + options.host + options.path,
+                    site_url: 'http://' + options.host + '/wow/character/' + realm + '/' + character + '/feed',
+                    author: 'rejas'
+                });
 
-            // Loop over data and add to feed
-            js.feed.forEach(function (item) {
-                feed.item(processitem(item));
-            });
+                // Parse JSON we get from blizzard
+                var js = JSON.parse(dom[0].data);
 
-            //Print the RSS feed out as response
-            responseObj.write(feed.xml());
-            responseObj.end();
-        }
-    });
-    var html_parser = new htmlparser.Parser(handler);
+                var outstandingCalls = js.feed.length;
+                var arr = [];
 
-    var req = http.request(options, function (res) {
-        console.log('STATUS: ' + res.statusCode);
-        //console.log('HEADERS: ' + JSON.stringify(res.headers));
+                // Loop over data and add to feed
+                js.feed.forEach(function (item) {
+                    processitem(item, function (err, res) {
+                        arr.push(res);
+                        outstandingCalls--;
+                        if (outstandingCalls == 0) {
+                            arr.sort(sortRSS);
+                            feed.items = arr;
+                            //Print the RSS feed out as response
+                            responseObj.write(feed.xml());
+                            responseObj.end();
+                        }
+                    });
+                });
+            }
+        });
+        var html_parser = new htmlparser.Parser(handler);
+
+        var req = http.request(options, function (res) {
+            //console.log('STATUS: ' + res.statusCode);
+            //console.log('HEADERS: ' + JSON.stringify(res.headers));
 
         var alldata = "";
         res.on('data', function (chunk) {
@@ -131,6 +163,8 @@ function process_guild_query(region, realm, guild, responseObj) {
         path: '/api/wow/guild/' + realm + '/' + guild + '?fields=news'
     };
 
+    console.log("Fetching " + options.host+ options.path);
+
     var handler = new htmlparser.DefaultHandler(function (error, dom) {
         if (!error) {
             ///////////// Generate RSS feed
@@ -145,20 +179,29 @@ function process_guild_query(region, realm, guild, responseObj) {
             // Parse JSON we get from blizzard
             var js = JSON.parse(dom[0].data);
 
+            var outstandingCalls = js.news.length;
+            var arr = [];
+
             // Loop over data and add to feed
             js.news.forEach(function (item) {
-                feed.item(processitem(item));
+                processitem(item, function (err, res) {
+                    arr.push(res);
+                    outstandingCalls--;
+                    if (outstandingCalls == 0) {
+                        arr.sort(sortRSS);
+                        feed.items = arr;
+                        //Print the RSS feed out as response
+                        responseObj.write(feed.xml());
+                        responseObj.end();
+                    }
+                });
             });
-
-            //Print the RSS feed out as response
-            responseObj.write(feed.xml());
-            responseObj.end();
         }
     });
     var html_parser = new htmlparser.Parser(handler);
 
     var req = http.request(options, function (res) {
-        console.log('STATUS: ' + res.statusCode);
+        //console.log('STATUS: ' + res.statusCode);
         //console.log('HEADERS: ' + JSON.stringify(res.headers));
 
         var alldata = "";
