@@ -257,6 +257,11 @@ http.createServer(function (request, response) {
         // Tell the client that return value is of rss type
         response.writeHead(200, {'Content-Type': 'application/rss+xml'});
 
+        armory = require('armory').defaults({
+            realm: realm,
+            region: region
+        });
+
         if (character) {
             process_char_query(region, realm, character, response);
         } else if (guild) {
