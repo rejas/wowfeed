@@ -113,7 +113,14 @@ function process_char_query(region, realm, character, responseObj) {
                 author: 'rejas'
             });
 
-            js = JSON.parse(dom[0].data);
+
+            try {
+                js = JSON.parse(dom[0].data);
+            } catch (e) {
+                js = {}
+                body.status = 'nok';
+                body.reason = e.fileName + ":" + e.lineNumber + ":" + e.message
+            }
 
             if (js.status)
             {
