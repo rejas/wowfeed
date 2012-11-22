@@ -104,8 +104,6 @@ function process_char_query(region, realm, character, responseObj) {
             console.log("error: " + error);
         }
          else {
-            console.log("dom " + dom[0].data);
-
             ///////////// Generate RSS feed
             var feed = new rss({
                 title: 'RSS feed for ' + character + ' on ' + realm,
@@ -115,15 +113,7 @@ function process_char_query(region, realm, character, responseObj) {
                 author: 'rejas'
             });
 
-            // Parse JSON we get from blizzard
-            try {
-                js = JSON.parse(dom[0].data);
-            } catch (e) {
-                dom.forEach( function (item) {
-                    console.log(item.data);
-                } );
-                return callback(new Error(dom));
-            }
+            js = JSON.parse(dom[0].data);
 
             if (js.status)
             {
