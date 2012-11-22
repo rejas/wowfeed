@@ -116,7 +116,12 @@ function process_char_query(region, realm, character, responseObj) {
             });
 
             // Parse JSON we get from blizzard
-            var js = JSON.parse(dom[0].data);
+            try {
+                js = JSON.parse(dom[0].data);
+            } catch (e) {
+                console.log("errrrrror " + uri + " _ " +body);
+                return callback(new Error(dom));
+            }
 
             if (js.status)
             {
