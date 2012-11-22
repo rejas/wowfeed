@@ -100,7 +100,12 @@ function process_char_query(region, realm, character, responseObj) {
     console.log("Fetching " + options.host+ options.path);
 
     var handler = new htmlparser.DefaultHandler(function (error, dom) {
-        if (!error) {
+        if (error) {
+            console.log("error: " + error);
+        }
+         else {
+            console.log("dom " + dom);
+
             ///////////// Generate RSS feed
             var feed = new rss({
                 title: 'RSS feed for ' + character + ' on ' + realm,
@@ -109,8 +114,6 @@ function process_char_query(region, realm, character, responseObj) {
                 site_url: 'http://' + options.host + '/wow/character/' + realm + '/' + character + '/feed',
                 author: 'rejas'
             });
-
-                  console.log(dom);
 
             // Parse JSON we get from blizzard
             var js = JSON.parse(dom[0].data);
