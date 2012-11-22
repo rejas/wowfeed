@@ -119,7 +119,9 @@ function process_char_query(region, realm, character, responseObj) {
             try {
                 js = JSON.parse(dom[0].data);
             } catch (e) {
-                console.log("errrrrror _ " +body);
+                dom.forEach( function (item) {
+                    console.log(item.data);
+                } );
                 return callback(new Error(dom));
             }
 
