@@ -104,7 +104,7 @@ function process_char_query(region, realm, character, responseObj) {
             console.log("error: " + error);
         }
          else {
-            console.log("dom " + dom[0]);
+            console.log("dom " + dom[0].data);
 
             ///////////// Generate RSS feed
             var feed = new rss({
