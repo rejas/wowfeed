@@ -113,11 +113,10 @@ function process_char_query(region, realm, character, responseObj) {
                 author: 'rejas'
             });
 
-
             try {
                 js = JSON.parse(dom[0].data);
             } catch (e) {
-                js = {}
+                js = {};
                 js.status = 'nok';
                 js.reason = e.fileName + ":" + e.lineNumber + ":" + e.message
             }
@@ -195,7 +194,13 @@ function process_guild_query(region, realm, guild, responseObj) {
             });
 
             // Parse JSON we get from blizzard
-            var js = JSON.parse(dom[0].data);
+            try {
+                js = JSON.parse(dom[0].data);
+            } catch (e) {
+                js = {};
+                js.status = 'nok';
+                js.reason = e.fileName + ":" + e.lineNumber + ":" + e.message
+            }
 
             if (js.status)
             {
@@ -204,6 +209,8 @@ function process_guild_query(region, realm, guild, responseObj) {
                 responseObj.end();
                 return;
             }
+
+
 
             var outstandingCalls = js.news.length;
             var arr = [];
