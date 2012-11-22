@@ -110,6 +110,8 @@ function process_char_query(region, realm, character, responseObj) {
                 author: 'rejas'
             });
 
+                  console.log(dom);
+
             // Parse JSON we get from blizzard
             var js = JSON.parse(dom[0].data);
 
