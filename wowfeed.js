@@ -6,7 +6,7 @@ var http = require('http'),
 
 var port = process.env.PORT || 3000;
 
-function processitem(item, callback) {
+function processitem(item, basecharurl, callback) {
 
     var rss = {};
     rss.date = item.timestamp;
@@ -46,14 +46,14 @@ function processitem(item, callback) {
 
         case ("playerAchievement"):
             rss.title = item.achievement.title;
-            rss.description = item.character + " earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
+            rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
             callback(this, rss);
             break;
 
         case ("itemPurchase"):
             rss.title = "Item purchased";
             armory.item(item.itemId, function (err, res) {
-                rss.description = item.character + " purchased item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+                rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> purchased item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
                 callback(this, rss);
             });
             break;
@@ -61,7 +61,7 @@ function processitem(item, callback) {
         case ("itemLoot"):
             rss.title = "Item looted";
             armory.item(item.itemId, function (err, res) {
-                rss.description = item.character + " obtained item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+                rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> obtained item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
                 callback(this, rss);
             });
             break;
@@ -69,7 +69,7 @@ function processitem(item, callback) {
         case ("itemCraft"):
             rss.title = "Item crafted";
             armory.item(item.itemId, function (err, res) {
-                rss.description = item.character + " crafted item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+                rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> crafted item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
                 callback(this, rss);
             });
             break;
@@ -118,22 +118,23 @@ function process_char_query(region, realm, character, responseObj) {
                 return;
             }
 
+            var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
+                outstandingCalls = js.news.length,
+                arr = [];
+
             // Generate RSS feed
             var feed = new rss({
                 title: 'RSS feed for ' + character + ' on ' + realm,
                 description: 'RSS feed generated from blizzards json feed-api',
                 feed_url: 'http://' + options.host + options.path,
-                site_url: 'http://' + options.host + '/wow/character/' + realm + '/' + character + '/feed',
+                site_url:  baseCharUrl + character + '/feed',
                 image_url: 'http://' + options.host + '/static-render/'+ region +'/' + js.thumbnail,
                 author: 'rejas'
             });
 
-            var outstandingCalls = js.feed.length;
-            var arr = [];
-
             // Loop over data and add to feed
             js.feed.forEach(function (item) {
-                processitem(item, function (err, res) {
+                processitem(item, baseCharUrl, function (err, res) {
                     arr.push(res);
                     outstandingCalls--;
                     if (outstandingCalls == 0) {
@@ -200,6 +201,10 @@ function process_guild_query(region, realm, guild, responseObj) {
                 return;
             }
 
+            var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
+                outstandingCalls = js.news.length,
+                arr = [];
+
             // Generate RSS feed
             var feed = new rss({
                 title: 'RSS feed for ' + guild + ' on ' + realm,
@@ -209,12 +214,9 @@ function process_guild_query(region, realm, guild, responseObj) {
                 author: 'rejas'
             });
 
-            var outstandingCalls = js.news.length;
-            var arr = [];
-
             // Loop over data and add to feed
             js.news.forEach(function (item) {
-                processitem(item, function (err, res) {
+                processitem(item, baseCharUrl, function (err, res) {
                     arr.push(res);
                     outstandingCalls--;
                     if (outstandingCalls == 0) {
