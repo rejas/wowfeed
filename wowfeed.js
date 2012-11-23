@@ -8,8 +8,17 @@ var http = require('http'),
 
 var port = process.env.PORT || 3000;
 
-function processitem(item, basecharurl, callback) {
+function generateItemLink(res) {
+    return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
+           "<a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+}
 
+function generateAchievementLink(res) {
+    return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
+           "<strong>" + res.title + "</strong>";
+}
+
+function processitem(item, basecharurl, callback) {
     var rss = {};
     rss.date = item.timestamp;
     rss.categories = [item.type];
@@ -21,20 +30,20 @@ function processitem(item, basecharurl, callback) {
 
     case ("ACHIEVEMENT"):
         rss.title = item.achievement.title;
-        rss.description = "Earned the achievement <strong>" + item.achievement.description + "</strong> for " + item.achievement.points + " points.";
+        rss.description = "Earned the achievement " + generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
         callback(null, rss);
         break;
 
     case ("CRITERIA"):
         rss.title = item.achievement.title;
-        rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement <strong>" + item.achievement.description + "</strong>";
+        rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement " + generateAchievementLink(item.achievement);
         callback(null, rss);
         break;
 
     case ("LOOT"):
         rss.title = "Loot";
         armory.item(item.itemId, function (err, res) {
-            rss.description = "Obtained <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+            rss.description = "Obtained " + generateItemLink(res);
             callback(this, rss);
         });
         break;
@@ -47,14 +56,14 @@ function processitem(item, basecharurl, callback) {
 
     case ("playerAchievement"):
         rss.title = item.achievement.title;
-        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
+        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement " + generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
         callback(null, rss);
         break;
 
     case ("itemPurchase"):
         rss.title = "Item purchased";
         armory.item(item.itemId, function (err, res) {
-            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> purchased item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> purchased item " + generateItemLink(res);
             callback(this, rss);
         });
         break;
@@ -62,7 +71,7 @@ function processitem(item, basecharurl, callback) {
     case ("itemLoot"):
         rss.title = "Item looted";
         armory.item(item.itemId, function (err, res) {
-            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + generateItemLink(res);
             callback(this, rss);
         });
         break;
@@ -70,7 +79,7 @@ function processitem(item, basecharurl, callback) {
     case ("itemCraft"):
         rss.title = "Item crafted";
         armory.item(item.itemId, function (err, res) {
-            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> crafted item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> crafted item " + generateItemLink(res);
             callback(this, rss);
         });
         break;
