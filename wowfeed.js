@@ -103,16 +103,7 @@ function process_char_query(region, realm, character, responseObj) {
         if (error) {
             console.log("error: " + error);
         }
-         else {
-            ///////////// Generate RSS feed
-            var feed = new rss({
-                title: 'RSS feed for ' + character + ' on ' + realm,
-                description: 'RSS feed generated from blizzards json feed-api',
-                feed_url: 'http://' + options.host + options.path,
-                site_url: 'http://' + options.host + '/wow/character/' + realm + '/' + character + '/feed',
-                author: 'rejas'
-            });
-
+        else {
             try {
                 js = JSON.parse(dom[0].data);
             } catch (e) {
@@ -128,6 +119,16 @@ function process_char_query(region, realm, character, responseObj) {
                 responseObj.end();
                 return;
             }
+
+            ///////////// Generate RSS feed
+            var feed = new rss({
+                title: 'RSS feed for ' + character + ' on ' + realm,
+                description: 'RSS feed generated from blizzards json feed-api',
+                feed_url: 'http://' + options.host + options.path,
+                site_url: 'http://' + options.host + '/wow/character/' + realm + '/' + character + '/feed',
+                image_url: 'http://' + options.host + '/static-render/'+ region +'/' + js.thumbnail,
+                author: 'rejas'
+            });
 
             var outstandingCalls = js.feed.length;
             var arr = [];
@@ -184,15 +185,6 @@ function process_guild_query(region, realm, guild, responseObj) {
 
     var handler = new htmlparser.DefaultHandler(function (error, dom) {
         if (!error) {
-            ///////////// Generate RSS feed
-            var feed = new rss({
-                title: 'RSS feed for ' + guild + ' on ' + realm,
-                description: 'RSS feed generated from blizzards json feed-api',
-                feed_url: 'http://' + options.host + options.path,
-                site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
-                author: 'rejas'
-            });
-
             // Parse JSON we get from blizzard
             try {
                 js = JSON.parse(dom[0].data);
@@ -210,7 +202,14 @@ function process_guild_query(region, realm, guild, responseObj) {
                 return;
             }
 
-
+            ///////////// Generate RSS feed
+            var feed = new rss({
+                title: 'RSS feed for ' + guild + ' on ' + realm,
+                description: 'RSS feed generated from blizzards json feed-api',
+                feed_url: 'http://' + options.host + options.path,
+                site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
+                author: 'rejas'
+            });
 
             var outstandingCalls = js.news.length;
             var arr = [];
