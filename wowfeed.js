@@ -20,27 +20,26 @@ function generateAchievementLink(res) {
 
 function processitem(item, basecharurl, callback) {
     var rss = {};
-    rss.date = item.timestamp;
     rss.categories = [item.type];
-    rss.title = item.type;
+    rss.date = item.timestamp;
     rss.guid = item.timestamp;
 
     switch (item.type) {
 
     case ("ACHIEVEMENT"):
-        rss.title = item.achievement.title;
+        rss.title = "Achievement earned";
         rss.description = "Earned the achievement " + generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
         callback(null, rss);
         break;
 
     case ("CRITERIA"):
-        rss.title = item.achievement.title;
+        rss.title = "Achievement step completed";
         rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement " + generateAchievementLink(item.achievement);
         callback(null, rss);
         break;
 
     case ("LOOT"):
-        rss.title = "Loot";
+        rss.title = "Item looted";
         armory.item(item.itemId, function (err, res) {
             rss.description = "Obtained " + generateItemLink(res);
             callback(this, rss);
@@ -48,13 +47,13 @@ function processitem(item, basecharurl, callback) {
         break;
 
     case ("BOSSKILL"):
-        rss.title = item.name;
+        rss.title = "Boss killed";
         rss.description = item.quantity + " " + item.achievement.title;
         callback(null, rss);
         break;
 
     case ("playerAchievement"):
-        rss.title = item.achievement.title;
+        rss.title = "Player Achievement earned";
         rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement " + generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
         callback(null, rss);
         break;
@@ -84,7 +83,7 @@ function processitem(item, basecharurl, callback) {
         break;
 
     case ("guildAchievement"):
-        rss.title = item.achievement.title;
+        rss.title = "Guild Achievement earned";
         rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
         callback(null, rss);
         break;
@@ -98,6 +97,10 @@ function processitem(item, basecharurl, callback) {
 
 function sortRSS(a, b) {
     return (b.date - a.date);
+}
+
+function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function process_char_query(region, realm, character, steps, responseObj) {
@@ -138,12 +141,12 @@ function process_char_query(region, realm, character, steps, responseObj) {
             outstandingCalls = js.feed.length;
 
             feed = new rss({
-                title: character + ' on ' + realm,
-                description: 'RSS feed generated from blizzards json feed-api',
+                title: capitaliseFirstLetter(character) + ' on ' + capitaliseFirstLetter(realm),
+                description: 'rss feed generated from blizzards json feed-api',
                 feed_url: 'http://' + options.host + options.path,
                 site_url: baseCharUrl + character + '/feed',
                 image_url: 'http://' + options.host + '/static-render/' + region + '/' + js.thumbnail,
-                author: 'rejas'
+                author: 'wowfeed@herokuapp.com'
             });
 
             // Loop over data and add to feed
@@ -229,11 +232,11 @@ function process_guild_query(region, realm, guild, steps, responseObj) {
             outstandingCalls = js.news.length;
 
             feed = new rss({
-                title: guild + ' on ' + realm,
+                title: capitaliseFirstLetter(guild) + ' on ' + capitaliseFirstLetter(realm),
                 description: 'rss feed generated from blizzards json feed-api',
                 feed_url: 'http://' + options.host + options.path,
                 site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
-                author: 'heroku@veeck.de'
+                author: 'wowfeed@herokuapp.com'
             });
 
             // Loop over data and add to feed
