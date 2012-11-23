@@ -119,7 +119,7 @@ function process_char_query(region, realm, character, responseObj) {
             }
 
             var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
-                outstandingCalls = js.news.length,
+                outstandingCalls = js.feed.length,
                 arr = [];
 
             // Generate RSS feed
