@@ -24,7 +24,6 @@ function processitem(item, basecharurl, callback) {
     rss.categories = [item.type];
     rss.title = item.type;
     rss.guid = item.timestamp;
-    rss.url = 'todo url';
 
     switch (item.type) {
 
@@ -198,8 +197,7 @@ function process_guild_query(region, realm, guild, steps, responseObj) {
         req,
         options = {
             host: region + '.battle.net',
-            path: encodeURI('/api/wow/guild/' + realm + '/' + guild + '?fields=news'),
-            encoding:     'utf-8'
+            path: encodeURI('/api/wow/guild/' + realm + '/' + guild + '?fields=news')
         };
 
     console.log("Fetching " + options.host + options.path);
@@ -232,10 +230,10 @@ function process_guild_query(region, realm, guild, steps, responseObj) {
 
             feed = new rss({
                 title: guild + ' on ' + realm,
-                description: 'RSS feed generated from blizzards json feed-api',
+                description: 'rss feed generated from blizzards json feed-api',
                 feed_url: 'http://' + options.host + options.path,
                 site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
-                author: 'rejas'
+                author: 'heroku@veeck.de'
             });
 
             // Loop over data and add to feed
