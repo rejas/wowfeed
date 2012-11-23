@@ -8,100 +8,104 @@ var http = require('http'),
 
 var port = process.env.PORT || 3000;
 
-function generateItemLink(res) {
-    return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
-           "<a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
-}
+var armoryItem = {
+    generateItemLink: function (res) {
+        return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
+               "<a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+    },
 
-function generateAchievementLink(res) {
-    return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
-           "<strong>" + res.title + "</strong>";
-}
+    generateAchievementLink: function (res) {
+        return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
+               "<strong>" + res.title + "</strong>";
+    },
 
-function processitem(item, basecharurl, callback) {
-    var rss = {};
-    rss.categories = [item.type];
-    rss.date = item.timestamp;
-    rss.guid = item.timestamp;
+    processitem: function (item, basecharurl, callback) {
+        var rss = {};
+        rss.categories = [item.type];
+        rss.date = item.timestamp;
+        rss.guid = item.timestamp;
 
-    switch (item.type) {
+        switch (item.type) {
 
-    case ("ACHIEVEMENT"):
-        rss.title = "Achievement earned";
-        rss.description = "Earned the achievement " + generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
-        callback(null, rss);
-        break;
+        case ("ACHIEVEMENT"):
+            rss.title = "Achievement earned";
+            rss.description = "Earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
+            callback(null, rss);
+            break;
 
-    case ("CRITERIA"):
-        rss.title = "Achievement step completed";
-        rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement " + generateAchievementLink(item.achievement);
-        callback(null, rss);
-        break;
+        case ("CRITERIA"):
+            rss.title = "Achievement step completed";
+            rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
+            callback(null, rss);
+            break;
 
-    case ("LOOT"):
-        rss.title = "Item looted";
-        armory.item(item.itemId, function (err, res) {
-            rss.description = "Obtained " + generateItemLink(res);
-            callback(this, rss);
-        });
-        break;
+        case ("LOOT"):
+            rss.title = "Item looted";
+            armory.item(item.itemId, function (err, res) {
+                rss.description = "Obtained " + armoryItem.generateItemLink(res);
+                callback(this, rss);
+            });
+            break;
 
-    case ("BOSSKILL"):
-        rss.title = "Boss killed";
-        rss.description = item.quantity + " " + item.achievement.title;
-        callback(null, rss);
-        break;
+        case ("BOSSKILL"):
+            rss.title = "Boss killed";
+            rss.description = item.quantity + " " + item.achievement.title;
+            callback(null, rss);
+            break;
 
-    case ("playerAchievement"):
-        rss.title = "Player Achievement earned";
-        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement " + generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
-        callback(null, rss);
-        break;
+        case ("playerAchievement"):
+            rss.title = "Player Achievement earned";
+            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
+            callback(null, rss);
+            break;
 
-    case ("itemPurchase"):
-        rss.title = "Item purchased";
-        armory.item(item.itemId, function (err, res) {
-            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> purchased item " + generateItemLink(res);
-            callback(this, rss);
-        });
-        break;
+        case ("itemPurchase"):
+            rss.title = "Item purchased";
+            armory.item(item.itemId, function (err, res) {
+                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> purchased item " + armoryItem.generateItemLink(res);
+                callback(this, rss);
+            });
+            break;
 
-    case ("itemLoot"):
-        rss.title = "Item looted";
-        armory.item(item.itemId, function (err, res) {
-            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + generateItemLink(res);
-            callback(this, rss);
-        });
-        break;
+        case ("itemLoot"):
+            rss.title = "Item looted";
+            armory.item(item.itemId, function (err, res) {
+                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + armoryItem.generateItemLink(res);
+                callback(this, rss);
+            });
+            break;
 
-    case ("itemCraft"):
-        rss.title = "Item crafted";
-        armory.item(item.itemId, function (err, res) {
-            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> crafted item " + generateItemLink(res);
-            callback(this, rss);
-        });
-        break;
+        case ("itemCraft"):
+            rss.title = "Item crafted";
+            armory.item(item.itemId, function (err, res) {
+                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> crafted item " + armoryItem.generateItemLink(res);
+                callback(this, rss);
+            });
+            break;
 
-    case ("guildAchievement"):
-        rss.title = "Guild Achievement earned";
-        rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
-        callback(null, rss);
-        break;
+        case ("guildAchievement"):
+            rss.title = "Guild Achievement earned";
+            rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
+            callback(null, rss);
+            break;
 
-    default:
-        console.log("Unhandled type: " + item.type);
-        callback(null, rss);
-        break;
+        default:
+            console.log("Unhandled type: " + item.type);
+            callback(null, rss);
+            break;
+        }
     }
-}
+};
 
-function sortRSS(a, b) {
-    return (b.date - a.date);
-}
+var feedUtil = {
+    sortRSS: function (a, b) {
+        return (b.date - a.date);
+    },
 
-function capitaliseFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
+    capitalize: function (string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+};
 
 function process_char_query(region, realm, character, steps, responseObj) {
     var handler,
@@ -141,7 +145,7 @@ function process_char_query(region, realm, character, steps, responseObj) {
             outstandingCalls = js.feed.length;
 
             feed = new rss({
-                title: capitaliseFirstLetter(character) + ' on ' + capitaliseFirstLetter(realm),
+                title: feedUtil.capitalize(character) + ' on ' + feedUtil.capitalize(realm),
                 description: 'rss feed generated from blizzards json feed-api',
                 feed_url: 'http://' + options.host + options.path,
                 site_url: baseCharUrl + character + '/feed',
@@ -151,14 +155,14 @@ function process_char_query(region, realm, character, steps, responseObj) {
 
             // Loop over data and add to feed
             js.feed.forEach(function (item) {
-                processitem(item, baseCharUrl, function (err, res) {
+                armoryItem.processitem(item, baseCharUrl, function (err, res) {
 
                     if (steps !== "false" || item.type !== "CRITERIA")
                         arr.push(res);
 
                     outstandingCalls--;
                     if (outstandingCalls === 0) {
-                        arr.sort(sortRSS);
+                        arr.sort(feedUtil.sortRSS);
                         feed.items = arr;
                         //Print the RSS feed out as response
                         responseObj.write(feed.xml());
@@ -232,7 +236,7 @@ function process_guild_query(region, realm, guild, steps, responseObj) {
             outstandingCalls = js.news.length;
 
             feed = new rss({
-                title: capitaliseFirstLetter(guild) + ' on ' + capitaliseFirstLetter(realm),
+                title: feedUtil.capitalize(guild) + ' on ' + feedUtil.capitalize(realm),
                 description: 'rss feed generated from blizzards json feed-api',
                 feed_url: 'http://' + options.host + options.path,
                 site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
@@ -241,11 +245,11 @@ function process_guild_query(region, realm, guild, steps, responseObj) {
 
             // Loop over data and add to feed
             js.news.forEach(function (item) {
-                processitem(item, baseCharUrl, function (err, res) {
+                armoryItem.processitem(item, baseCharUrl, function (err, res) {
                     arr.push(res);
                     outstandingCalls--;
                     if (outstandingCalls === 0) {
-                        arr.sort(sortRSS);
+                        arr.sort(feedUtil.sortRSS);
                         feed.items = arr;
                         //Print the RSS feed out as response
                         responseObj.write(feed.xml());
