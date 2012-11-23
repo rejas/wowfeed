@@ -1,3 +1,5 @@
+"use strict";
+
 var http = require('http'),
     rss = require('rss'),
     url = require('url'),
@@ -12,78 +14,77 @@ function processitem(item, basecharurl, callback) {
     rss.date = item.timestamp;
     rss.categories = [item.type];
     rss.title = item.type;
-    rss.guid = 0;
-    rss.author = 'todo author';
+    rss.guid = item.timestamp;
     rss.url = 'todo url';
 
     switch (item.type) {
 
-        case ("ACHIEVEMENT"):
-            rss.title = item.achievement.title;
-            rss.description = "Earned the achievement <strong>" + item.achievement.description + "</strong> for " + item.achievement.points + " points.";
+    case ("ACHIEVEMENT"):
+        rss.title = item.achievement.title;
+        rss.description = "Earned the achievement <strong>" + item.achievement.description + "</strong> for " + item.achievement.points + " points.";
+        callback(this, rss);
+        break;
+
+    case ("CRITERIA"):
+        rss.title = item.achievement.title;
+        rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement <strong>" + item.achievement.description + "</strong>";
+        callback(this, rss);
+        break;
+
+    case ("LOOT"):
+        rss.title = "Loot";
+        armory.item(item.itemId, function (err, res) {
+            rss.description = "Obtained <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
             callback(this, rss);
-            break;
+        });
+        break;
 
-        case ("CRITERIA"):
-            rss.title = item.achievement.title;
-            rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement <strong>" + item.achievement.description + "</strong>";
+    case ("BOSSKILL"):
+        rss.title = item.name;
+        rss.description = item.quantity + " " + item.achievement.title;
+        callback(this, rss);
+        break;
+
+    case ("playerAchievement"):
+        rss.title = item.achievement.title;
+        rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
+        callback(this, rss);
+        break;
+
+    case ("itemPurchase"):
+        rss.title = "Item purchased";
+        armory.item(item.itemId, function (err, res) {
+            rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> purchased item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
             callback(this, rss);
-            break;
+        });
+        break;
 
-        case ("LOOT"):
-            rss.title = "Loot";
-            armory.item(item.itemId, function (err, res) {
-                rss.description = "Obtained <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
-                callback(this, rss);
-            });
-            break;
-
-        case ("BOSSKILL"):
-            rss.title = item.name;
-            rss.description = item.quantity + " " + item.achievement.title;
+    case ("itemLoot"):
+        rss.title = "Item looted";
+        armory.item(item.itemId, function (err, res) {
+            rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> obtained item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
             callback(this, rss);
-            break;
+        });
+        break;
 
-        case ("playerAchievement"):
-            rss.title = item.achievement.title;
-            rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
+    case ("itemCraft"):
+        rss.title = "Item crafted";
+        armory.item(item.itemId, function (err, res) {
+            rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> crafted item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
             callback(this, rss);
-            break;
+        });
+        break;
 
-        case ("itemPurchase"):
-            rss.title = "Item purchased";
-            armory.item(item.itemId, function (err, res) {
-                rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> purchased item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
-                callback(this, rss);
-            });
-            break;
+    case ("guildAchievement"):
+        rss.title = item.achievement.title;
+        rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
+        callback(this, rss);
+        break;
 
-        case ("itemLoot"):
-            rss.title = "Item looted";
-            armory.item(item.itemId, function (err, res) {
-                rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> obtained item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
-                callback(this, rss);
-            });
-            break;
-
-        case ("itemCraft"):
-            rss.title = "Item crafted";
-            armory.item(item.itemId, function (err, res) {
-                rss.description = "<a href='"+basecharurl + item.character + "/'> " + item.character + "</a> crafted item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
-                callback(this, rss);
-            });
-            break;
-
-        case ("guildAchievement"):
-            rss.title = item.achievement.title;
-            rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
-            callback(this, rss);
-            break;
-
-        default:
-            console.log("Unhandled type: " + item.type);
-            callback(this, rss);
-            break;
+    default:
+        console.log("Unhandled type: " + item.type);
+        callback(this, rss);
+        break;
     }
 }
 
@@ -97,11 +98,12 @@ function process_char_query(region, realm, character, responseObj) {
         path: encodeURI('/api/wow/character/' + realm + '/' + character + '?fields=feed')
     };
 
-    console.log("Fetching " + options.host+ options.path);
+    console.log("Fetching " + options.host + options.path);
 
     var handler = new htmlparser.DefaultHandler(function (error, dom) {
         if (!error) {
             // Parse JSON we get from blizzard
+            var js;
             try {
                 js = JSON.parse(dom[0].data);
             } catch (e) {
@@ -110,8 +112,7 @@ function process_char_query(region, realm, character, responseObj) {
                 js.reason = e.fileName + ":" + e.lineNumber + ":" + e.message
             }
 
-            if (js.status)
-            {
+            if (js.status) {
                 responseObj.writeHead(200, {'Content-Type': 'text/html'});
                 responseObj.write(js.status + ": " + js.reason);
                 responseObj.end();
@@ -120,17 +121,15 @@ function process_char_query(region, realm, character, responseObj) {
 
             var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
                 outstandingCalls = js.feed.length,
-                arr = [];
-
-            // Generate RSS feed
-            var feed = new rss({
-                title: 'RSS feed for ' + character + ' on ' + realm,
-                description: 'RSS feed generated from blizzards json feed-api',
-                feed_url: 'http://' + options.host + options.path,
-                site_url:  baseCharUrl + character + '/feed',
-                image_url: 'http://' + options.host + '/static-render/'+ region +'/' + js.thumbnail,
-                author: 'rejas'
-            });
+                arr = [],
+                feed = new rss({
+                    title: character + ' on ' + realm,
+                    description: 'RSS feed generated from blizzards json feed-api',
+                    feed_url: 'http://' + options.host + options.path,
+                    site_url:  baseCharUrl + character + '/feed',
+                    image_url: 'http://' + options.host + '/static-render/'+ region +'/' + js.thumbnail,
+                    author: 'rejas'
+                });
 
             // Loop over data and add to feed
             js.feed.forEach(function (item) {
@@ -148,23 +147,23 @@ function process_char_query(region, realm, character, responseObj) {
             });
         }
     });
-    var html_parser = new htmlparser.Parser(handler);
 
-    var req = http.request(options, function (res) {
-        //console.log('STATUS: ' + res.statusCode);
-        //console.log('HEADERS: ' + JSON.stringify(res.headers));
+    var html_parser = new htmlparser.Parser(handler),
+        req = http.request(options, function (res) {
+            //console.log('STATUS: ' + res.statusCode);
+            //console.log('HEADERS: ' + JSON.stringify(res.headers));
 
-        var alldata = "";
-        res.on('data', function (chunk) {
-            alldata = alldata + chunk;
+            var alldata = "";
+            res.on('data', function (chunk) {
+                alldata = alldata + chunk;
+            });
+            res.on('error', function (e) {
+                console.log('problem with request: ' + e.message);
+            });
+            res.on('end', function () {
+                html_parser.parseComplete(alldata);
+            });
         });
-        res.on('error', function (e) {
-            console.log('problem with request: ' + e.message);
-        });
-        res.on('end', function () {
-            html_parser.parseComplete(alldata);
-        });
-    });
 
     req.on('error', function (e) {
         console.log('problem with request: ' + e.message);
@@ -180,11 +179,12 @@ function process_guild_query(region, realm, guild, responseObj) {
         encoding:     'utf-8'
     };
 
-    console.log("Fetching " + options.host+ options.path);
+    console.log("Fetching " + options.host + options.path);
 
     var handler = new htmlparser.DefaultHandler(function (error, dom) {
         if (!error) {
             // Parse JSON we get from blizzard
+            var js;
             try {
                 js = JSON.parse(dom[0].data);
             } catch (e) {
@@ -193,8 +193,7 @@ function process_guild_query(region, realm, guild, responseObj) {
                 js.reason = e.fileName + ":" + e.lineNumber + ":" + e.message
             }
 
-            if (js.status)
-            {
+            if (js.status) {
                 responseObj.writeHead(200, {'Content-Type': 'text/html'});
                 responseObj.write(js.status + ": " + js.reason);
                 responseObj.end();
@@ -203,16 +202,14 @@ function process_guild_query(region, realm, guild, responseObj) {
 
             var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
                 outstandingCalls = js.news.length,
-                arr = [];
-
-            // Generate RSS feed
-            var feed = new rss({
-                title: 'RSS feed for ' + guild + ' on ' + realm,
-                description: 'RSS feed generated from blizzards json feed-api',
-                feed_url: 'http://' + options.host + options.path,
-                site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
-                author: 'rejas'
-            });
+                arr = [],
+                feed = new rss({
+                    title: guild + ' on ' + realm,
+                    description: 'RSS feed generated from blizzards json feed-api',
+                    feed_url: 'http://' + options.host + options.path,
+                    site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
+                    author: 'rejas'
+                });
 
             // Loop over data and add to feed
             js.news.forEach(function (item) {
@@ -230,23 +227,23 @@ function process_guild_query(region, realm, guild, responseObj) {
             });
         }
     });
-    var html_parser = new htmlparser.Parser(handler);
 
-    var req = http.request(options, function (res) {
-        //console.log('STATUS: ' + res.statusCode);
-        //console.log('HEADERS: ' + JSON.stringify(res.headers));
+    var html_parser = new htmlparser.Parser(handler),
+        req = http.request(options, function (res) {
+            //console.log('STATUS: ' + res.statusCode);
+            //console.log('HEADERS: ' + JSON.stringify(res.headers));
 
-        var alldata = "";
-        res.on('data', function (chunk) {
-            alldata = alldata + chunk;
+            var alldata = "";
+            res.on('data', function (chunk) {
+                alldata = alldata + chunk;
+            });
+            res.on('error', function (e) {
+                console.log('problem with request: ' + e.message);
+            });
+            res.on('end', function () {
+                html_parser.parseComplete(alldata);
+            });
         });
-        res.on('error', function (e) {
-            console.log('problem with request: ' + e.message);
-        });
-        res.on('end', function () {
-            html_parser.parseComplete(alldata);
-        });
-    });
 
     req.on('error', function (e) {
         console.log('problem with request: ' + e.message);
@@ -258,11 +255,11 @@ function process_guild_query(region, realm, guild, responseObj) {
 /////////// Create and start the server to handle requests
 http.createServer(function (request, response) {
     // Extract the searchquery from the url
-    var url_parts = url.parse(request.url, true);
-    var character = url_parts.query.character;
-    var realm = url_parts.query.realm;
-    var region = url_parts.query.region;
-    var guild = url_parts.query.guild;
+    var url_parts = url.parse(request.url, true),
+        character = url_parts.query.character,
+        realm = url_parts.query.realm,
+        region = url_parts.query.region,
+        guild = url_parts.query.guild;
 
     if (!region || !realm || !(character || guild)) {
         // Tell the client the search params were not correct
