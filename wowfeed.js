@@ -32,8 +32,8 @@ function processitem(item, callback) {
 
         case ("LOOT"):
             rss.title = "Loot";
-            armory.item(item.itemId, function(err, res) {
-                rss.description = "Obtained  <strong>" + res.name + "</strong>";
+            armory.item(item.itemId, function (err, res) {
+                rss.description = "Obtained <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
                 callback(this, rss);
             });
             break;
@@ -52,24 +52,24 @@ function processitem(item, callback) {
 
         case ("itemPurchase"):
             rss.title = "Item purchased";
-            armory.item(item.itemId, function(err, res) {
-                rss.description = item.character + " purchased item  <strong>" + res.name + "</strong>";
+            armory.item(item.itemId, function (err, res) {
+                rss.description = item.character + " purchased item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
                 callback(this, rss);
             });
             break;
 
         case ("itemLoot"):
             rss.title = "Item looted";
-            armory.item(item.itemId, function(err, res) {
-                rss.description = item.character + " obtained item  <strong>" + res.name + "</strong>";
+            armory.item(item.itemId, function (err, res) {
+                rss.description = item.character + " obtained item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
                 callback(this, rss);
             });
             break;
 
         case ("itemCraft"):
             rss.title = "Item crafted";
-            armory.item(item.itemId, function(err, res) {
-                rss.description = item.character + " crafted item  <strong>" + res.name + "</strong>";
+            armory.item(item.itemId, function (err, res) {
+                rss.description = item.character + " crafted item <a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
                 callback(this, rss);
             });
             break;
@@ -100,10 +100,8 @@ function process_char_query(region, realm, character, responseObj) {
     console.log("Fetching " + options.host+ options.path);
 
     var handler = new htmlparser.DefaultHandler(function (error, dom) {
-        if (error) {
-            console.log("error: " + error);
-        }
-        else {
+        if (!error) {
+            // Parse JSON we get from blizzard
             try {
                 js = JSON.parse(dom[0].data);
             } catch (e) {
@@ -120,7 +118,7 @@ function process_char_query(region, realm, character, responseObj) {
                 return;
             }
 
-            ///////////// Generate RSS feed
+            // Generate RSS feed
             var feed = new rss({
                 title: 'RSS feed for ' + character + ' on ' + realm,
                 description: 'RSS feed generated from blizzards json feed-api',
@@ -202,7 +200,7 @@ function process_guild_query(region, realm, guild, responseObj) {
                 return;
             }
 
-            ///////////// Generate RSS feed
+            // Generate RSS feed
             var feed = new rss({
                 title: 'RSS feed for ' + guild + ' on ' + realm,
                 description: 'RSS feed generated from blizzards json feed-api',
