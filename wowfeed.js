@@ -92,7 +92,7 @@ function sortRSS(a, b) {
     return (b.date - a.date);
 }
 
-function process_char_query(region, realm, character, responseObj) {
+function process_char_query(region, realm, character, steps, responseObj) {
     var handler,
         html_parser,
         req,
@@ -141,7 +141,10 @@ function process_char_query(region, realm, character, responseObj) {
             // Loop over data and add to feed
             js.feed.forEach(function (item) {
                 processitem(item, baseCharUrl, function (err, res) {
-                    arr.push(res);
+
+                    if (steps !== "false" || item.type !== "CRITERIA")
+                        arr.push(res);
+
                     outstandingCalls--;
                     if (outstandingCalls === 0) {
                         arr.sort(sortRSS);
@@ -180,7 +183,7 @@ function process_char_query(region, realm, character, responseObj) {
     req.end();
 }
 
-function process_guild_query(region, realm, guild, responseObj) {
+function process_guild_query(region, realm, guild, steps, responseObj) {
     var handler,
         html_parser,
         req,
@@ -275,6 +278,7 @@ http.createServer(function (request, response) {
         character = url_parts.query.character,
         realm = url_parts.query.realm,
         region = url_parts.query.region,
+        steps = url_parts.query.steps,
         guild = url_parts.query.guild;
 
     if (!region || !realm || !(character || guild)) {
@@ -291,9 +295,9 @@ http.createServer(function (request, response) {
         });
 
         if (character) {
-            process_char_query(region, realm, character, response);
+            process_char_query(region, realm, character, steps, response);
         } else if (guild) {
-            process_guild_query(region, realm, guild, response);
+            process_guild_query(region, realm, guild, steps, response);
         }
     }
 }).listen(port);
