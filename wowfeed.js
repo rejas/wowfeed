@@ -8,15 +8,17 @@ var http = require('http'),
 
 var port = process.env.PORT || 3000;
 
+var quality = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
+
 var armoryItem = {
 
-    styleChar: function res() {
-        return res.name;
+    styleChar: function (char) {
+        return char.name;
     },
 
     generateItemLink: function (res) {
         return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
-               "<a href='http://www.battle.net/wow/en/item/" + res.id + "'>" + res.name + "</a>";
+            "<a href='http://www.battle.net/wow/en/item/" + res.id + "' style='color: " + quality[res.quality] + "; text-decoration: none'>" + res.name + "</a>";
     },
 
     generateAchievementLink: function (res) {
