@@ -8,22 +8,26 @@ var http = require('http'),
 
 var port = process.env.PORT || 3000;
 
-var quality = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
+var qualityColor = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
 
 var armoryItem = {
 
-    styleChar: function (char) {
-        return char.name;
+    styleChar: function (c) {
+        return "style='text-decoration: none'";
+    },
+
+    styleItem: function (i) {
+        return "style='color: " + qualityColor[i.quality] + "; text-decoration: none'";
     },
 
     generateItemLink: function (res) {
         return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
-            "<a href='http://www.battle.net/wow/en/item/" + res.id + "' style='color: " + quality[res.quality] + "; text-decoration: none'>" + res.name + "</a>";
+            "<a href='http://www.battle.net/wow/en/item/" + res.id + "' " + this.styleItem(res) + ">" + res.name + "</a>";
     },
 
     generateAchievementLink: function (res) {
         return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
-               "<strong>" + res.title + "</strong>";
+               "<a href='http://www.wowhead.com/achievement=" + res.id + "'>" + res.title + "</a>";
     },
 
     processitem: function (item, basecharurl, callback) {
@@ -35,13 +39,13 @@ var armoryItem = {
         switch (item.type) {
 
         case ("ACHIEVEMENT"):
-            rss.title = "Earned " + item.achievement.title;
+            rss.title = "Earned the achievement " + item.achievement.title;
             rss.description = "Earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
             callback(null, rss);
             break;
 
         case ("CRITERIA"):
-            rss.title = "Completed step " + item.criteria.description + " of Achievement " + item.achievement.title;
+            rss.title = "Completed the step " + item.criteria.description + " of achievement " + item.achievement.title;
             rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
             callback(null, rss);
             break;
@@ -61,7 +65,7 @@ var armoryItem = {
             break;
 
         case ("playerAchievement"):
-            rss.title = item.character + " earned Achievement " + item.achievement.title;
+            rss.title = item.character + " earned the achievement " + item.achievement.title;
             rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
             callback(null, rss);
             break;
