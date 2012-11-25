@@ -39,20 +39,20 @@ var armoryItem = {
         switch (item.type) {
 
         case ("ACHIEVEMENT"):
-            rss.title = "Earned the achievement " + item.achievement.title;
+            rss.title = "Earned the achievement '" + item.achievement.title + "'";
             rss.description = "Earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
             callback(null, rss);
             break;
 
         case ("CRITERIA"):
-            rss.title = "Completed the step " + item.criteria.description + " of achievement " + item.achievement.title;
+            rss.title = "Completed the step '" + item.criteria.description + "' of achievement '" + item.achievement.title + "'";
             rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
             callback(null, rss);
             break;
 
         case ("LOOT"):
             armory.item(item.itemId, function (err, res) {
-                rss.title = "Looted " + res.name;
+                rss.title = "Looted '" + res.name + "'";
                 rss.description = "Obtained " + armoryItem.generateItemLink(res);
                 callback(this, rss);
             });
@@ -65,14 +65,14 @@ var armoryItem = {
             break;
 
         case ("playerAchievement"):
-            rss.title = item.character + " earned the achievement " + item.achievement.title;
+            rss.title = item.character + " earned the achievement '" + item.achievement.title + "'";
             rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
             callback(null, rss);
             break;
 
         case ("itemPurchase"):
             armory.item(item.itemId, function (err, res) {
-                rss.title = item.character + " purchased " + res.name;
+                rss.title = item.character + " purchased '" + res.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> purchased item " + armoryItem.generateItemLink(res);
                 callback(this, rss);
             });
@@ -80,7 +80,7 @@ var armoryItem = {
 
         case ("itemLoot"):
             armory.item(item.itemId, function (err, res) {
-                rss.title = item.character + " looted " + res.name;
+                rss.title = item.character + " looted '" + res.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + armoryItem.generateItemLink(res);
                 callback(this, rss);
             });
@@ -88,14 +88,14 @@ var armoryItem = {
 
         case ("itemCraft"):
             armory.item(item.itemId, function (err, res) {
-                rss.title = item.character + " crafted " + res.name;
+                rss.title = item.character + " crafted '" + res.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> crafted item " + armoryItem.generateItemLink(res);
                 callback(this, rss);
             });
             break;
 
         case ("guildAchievement"):
-            rss.title = "Guild earned " + item.achievement.title;
+            rss.title = "Guild earned '" + item.achievement.title + "'";
             rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
             callback(null, rss);
             break;
