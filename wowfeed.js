@@ -22,7 +22,7 @@ var armoryItem = {
 
     generateItemLink: function (res) {
         return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
-            "<a href='http://www.battle.net/wow/en/item/" + res.id + "' " + this.styleItem(res) + ">" + res.name + "</a>";
+            "<a href='http://www.wowhead.com/item=" + res.id + "' " + this.styleItem(res) + ">" + res.name + "</a>";
     },
 
     generateAchievementLink: function (res) {
