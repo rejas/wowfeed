@@ -27,7 +27,7 @@ var armoryItem = {
 
     generateAchievementLink: function (res) {
         return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
-               "<a href='http://www.wowhead.com/achievement=" + res.id + "'>" + res.title + "</a>";
+               "<a href='http://www.wowhead.com/achievement=" + res.id + "' style='color: #e1b105; text-decoration: none'>" + res.title + "</a>";
     },
 
     processitem: function (item, basecharurl, callback) {
@@ -46,7 +46,7 @@ var armoryItem = {
 
         case ("CRITERIA"):
             rss.title = "Completed the step '" + item.criteria.description + "' of achievement '" + item.achievement.title + "'";
-            rss.description = "Completed step <strong>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
+            rss.description = "Completed step <strong style='color: #fef092'>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
             callback(null, rss);
             break;
 
@@ -168,8 +168,9 @@ function process_char_query(region, realm, character, steps, responseObj) {
             js.feed.forEach(function (item) {
                 armoryItem.processitem(item, baseCharUrl, function (err, res) {
 
-                    if (steps !== "false" || item.type !== "CRITERIA")
+                    if (steps !== "false" || item.type !== "CRITERIA") {
                         arr.push(res);
+                    }
 
                     outstandingCalls--;
                     if (outstandingCalls === 0) {
