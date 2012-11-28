@@ -1,13 +1,15 @@
 {
- "name": "wowfeed",
- "version": "0.1.4",
- "dependencies": {
-  "rss": "",
-  "htmlparser": "",
-  "armory": ""
- },
- "engines": {
-  "node": "",
-  "npm": ""
- }
+    "name": "wowfeed",
+    "version": "0.2",
+    "dependencies": {
+        "armory": "",
+        "htmlparser": "",
+        "request": "",
+        "rss": "",
+        "wowhead": ""
+    },
+    "engines": {
+        "node": "0.8.x",
+        "npm": "1.1.x"
+    }
 }
