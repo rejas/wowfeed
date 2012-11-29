@@ -310,7 +310,8 @@ http.createServer(function (request, response) {
     if (!region || !realm || !(character || guild)) {
         // Tell the client the search params were not correct
         response.writeHead(200, {'Content-Type': 'text/html'});
-        response.end('Invalid call, please specify region, realm as well as character or guild.\n');
+        response.end('Invalid call, please specify region, realm as well as character or guild.\n Something like this: '
+            + '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=tarren-mill&character=kungen" > wowfeed.herokuapp.com/?region=eu&realm=tarren-mill&character=kungen </a>');
     } else {
         // Tell the client that return value is of rss type
         response.writeHead(200, {'Content-Type': 'application/rss+xml'});
