@@ -118,215 +118,219 @@ var feedUtil = {
     }
 };
 
-function process_char_query(region, realm, character, steps, responseObj) {
-    var handler,
-        html_parser,
-        req,
-        options = {
-            host: region + '.battle.net',
-            path: encodeURI('/api/wow/character/' + realm + '/' + character + '?fields=feed')
-        };
+var app = {
+    process_guild_query: function (region, realm, guild, steps, responseObj) {
+        var handler,
+            html_parser,
+            req,
+            options = {
+                host: region + '.battle.net',
+                path: encodeURI('/api/wow/guild/' + realm + '/' + guild + '?fields=news')
+            };
 
-    console.log("Fetching " + options.host + options.path);
+        console.log("Fetching " + options.host + options.path);
 
-    handler = new htmlparser.DefaultHandler(function (error, dom) {
-        if (!error) {
-            var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
-                outstandingCalls,
-                arr = [],
-                feed,
-                js;
+        handler = new htmlparser.DefaultHandler(function (error, dom) {
+            if (!error) {
+                var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
+                    outstandingCalls,
+                    arr = [],
+                    feed,
+                    js;
 
-            // Parse JSON we get from blizzard
-            try {
-                js = JSON.parse(dom[0].data);
-            } catch (e) {
-                js = {};
-                js.status = 'nok';
-                js.reason = e.fileName + ":" + e.lineNumber + ":" + e.message;
-            }
+                // Parse JSON we get from blizzard
+                try {
+                    js = JSON.parse(dom[0].data);
+                } catch (e) {
+                    js = {};
+                    js.status = 'nok';
+                    js.reason = e.fileName + ":" + e.lineNumber + ":" + e.message;
+                }
 
-            if (js.status) {
-                responseObj.writeHead(200, {'Content-Type': 'text/html'});
-                responseObj.write(js.status + ": " + js.reason);
-                responseObj.end();
-                return;
-            }
+                if (js.status) {
+                    responseObj.writeHead(200, {'Content-Type': 'text/html'});
+                    responseObj.write(js.status + ": " + js.reason);
+                    responseObj.end();
+                    return;
+                }
 
-            outstandingCalls = js.feed.length;
+                outstandingCalls = js.news.length;
 
-            feed = new rss({
-                title: feedUtil.capitalize(character) + ' on ' + feedUtil.capitalize(realm),
-                description: 'rss feed generated from blizzards json feed-api',
-                feed_url: 'http://' + options.host + options.path,
-                site_url: baseCharUrl + character + '/feed',
-                image_url: 'http://' + options.host + '/static-render/' + region + '/' + js.thumbnail,
-                author: 'wowfeed@herokuapp.com'
-            });
+                feed = new rss({
+                    title: feedUtil.capitalize(guild) + ' on ' + feedUtil.capitalize(realm),
+                    description: 'rss feed generated from blizzards json feed-api',
+                    feed_url: 'http://' + options.host + options.path,
+                    site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
+                    author: 'wowfeed@herokuapp.com'
+                });
 
-            // Loop over data and add to feed
-            js.feed.forEach(function (item) {
-                armoryItem.processitem(item, baseCharUrl, function (err, res) {
-
-                    if (steps !== "false" || item.type !== "CRITERIA") {
+                // Loop over data and add to feed
+                js.news.forEach(function (item) {
+                    armoryItem.processitem(item, baseCharUrl, function (err, res) {
                         arr.push(res);
-                    }
-
-                    outstandingCalls--;
-                    if (outstandingCalls === 0) {
-                        arr.sort(feedUtil.sortRSS);
-                        feed.items = arr;
-                        //Print the RSS feed out as response
-                        responseObj.write(feed.xml());
-                        responseObj.end();
-                    }
+                        outstandingCalls--;
+                        if (outstandingCalls === 0) {
+                            arr.sort(feedUtil.sortRSS);
+                            feed.items = arr;
+                            //Print the RSS feed out as response
+                            responseObj.write(feed.xml());
+                            responseObj.end();
+                        }
+                    });
                 });
-            });
-        }
-    });
-
-    html_parser = new htmlparser.Parser(handler);
-
-    req = http.request(options, function (res) {
-        //console.log('STATUS: ' + res.statusCode);
-        //console.log('HEADERS: ' + JSON.stringify(res.headers));
-
-        var alldata = "";
-        res.on('data', function (chunk) {
-            alldata = alldata + chunk;
+            }
         });
-        res.on('error', function (e) {
+
+        html_parser = new htmlparser.Parser(handler);
+
+        req = http.request(options, function (res) {
+            //console.log('STATUS: ' + res.statusCode);
+            //console.log('HEADERS: ' + JSON.stringify(res.headers));
+
+            var alldata = "";
+            res.on('data', function (chunk) {
+                alldata = alldata + chunk;
+            });
+            res.on('error', function (e) {
+                console.log('problem with request: ' + e.message);
+            });
+            res.on('end', function () {
+                html_parser.parseComplete(alldata);
+            });
+        });
+
+        req.on('error', function (e) {
             console.log('problem with request: ' + e.message);
         });
-        res.on('end', function () {
-            html_parser.parseComplete(alldata);
-        });
-    });
 
-    req.on('error', function (e) {
-        console.log('problem with request: ' + e.message);
-    });
+        req.end();
+    },
+    process_char_query: function (region, realm, character, steps, responseObj) {
+        var handler,
+            html_parser,
+            req,
+            options = {
+                host: region + '.battle.net',
+                path: encodeURI('/api/wow/character/' + realm + '/' + character + '?fields=feed')
+            };
 
-    req.end();
-}
+        console.log("Fetching " + options.host + options.path);
 
-function process_guild_query(region, realm, guild, steps, responseObj) {
-    var handler,
-        html_parser,
-        req,
-        options = {
-            host: region + '.battle.net',
-            path: encodeURI('/api/wow/guild/' + realm + '/' + guild + '?fields=news')
-        };
+        handler = new htmlparser.DefaultHandler(function (error, dom) {
+            if (!error) {
+                var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
+                    outstandingCalls,
+                    arr = [],
+                    feed,
+                    js;
 
-    console.log("Fetching " + options.host + options.path);
+                // Parse JSON we get from blizzard
+                try {
+                    js = JSON.parse(dom[0].data);
+                } catch (e) {
+                    js = {};
+                    js.status = 'nok';
+                    js.reason = e.fileName + ":" + e.lineNumber + ":" + e.message;
+                }
 
-    handler = new htmlparser.DefaultHandler(function (error, dom) {
-        if (!error) {
-            var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
-                outstandingCalls,
-                arr = [],
-                feed,
-                js;
+                if (js.status) {
+                    responseObj.writeHead(200, {'Content-Type': 'text/html'});
+                    responseObj.write(js.status + ": " + js.reason);
+                    responseObj.end();
+                    return;
+                }
 
-            // Parse JSON we get from blizzard
-            try {
-                js = JSON.parse(dom[0].data);
-            } catch (e) {
-                js = {};
-                js.status = 'nok';
-                js.reason = e.fileName + ":" + e.lineNumber + ":" + e.message;
-            }
+                outstandingCalls = js.feed.length;
 
-            if (js.status) {
-                responseObj.writeHead(200, {'Content-Type': 'text/html'});
-                responseObj.write(js.status + ": " + js.reason);
-                responseObj.end();
-                return;
-            }
-
-            outstandingCalls = js.news.length;
-
-            feed = new rss({
-                title: feedUtil.capitalize(guild) + ' on ' + feedUtil.capitalize(realm),
-                description: 'rss feed generated from blizzards json feed-api',
-                feed_url: 'http://' + options.host + options.path,
-                site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
-                author: 'wowfeed@herokuapp.com'
-            });
-
-            // Loop over data and add to feed
-            js.news.forEach(function (item) {
-                armoryItem.processitem(item, baseCharUrl, function (err, res) {
-                    arr.push(res);
-                    outstandingCalls--;
-                    if (outstandingCalls === 0) {
-                        arr.sort(feedUtil.sortRSS);
-                        feed.items = arr;
-                        //Print the RSS feed out as response
-                        responseObj.write(feed.xml());
-                        responseObj.end();
-                    }
+                feed = new rss({
+                    title: feedUtil.capitalize(character) + ' on ' + feedUtil.capitalize(realm),
+                    description: 'rss feed generated from blizzards json feed-api',
+                    feed_url: 'http://' + options.host + options.path,
+                    site_url: baseCharUrl + character + '/feed',
+                    image_url: 'http://' + options.host + '/static-render/' + region + '/' + js.thumbnail,
+                    author: 'wowfeed@herokuapp.com'
                 });
-            });
-        }
-    });
 
-    html_parser = new htmlparser.Parser(handler);
+                // Loop over data and add to feed
+                js.feed.forEach(function (item) {
+                    armoryItem.processitem(item, baseCharUrl, function (err, res) {
 
-    req = http.request(options, function (res) {
-        //console.log('STATUS: ' + res.statusCode);
-        //console.log('HEADERS: ' + JSON.stringify(res.headers));
+                        if (steps !== "false" || item.type !== "CRITERIA") {
+                            arr.push(res);
+                        }
 
-        var alldata = "";
-        res.on('data', function (chunk) {
-            alldata = alldata + chunk;
+                        outstandingCalls--;
+                        if (outstandingCalls === 0) {
+                            arr.sort(feedUtil.sortRSS);
+                            feed.items = arr;
+                            //Print the RSS feed out as response
+                            responseObj.write(feed.xml());
+                            responseObj.end();
+                        }
+                    });
+                });
+            }
         });
-        res.on('error', function (e) {
+
+        html_parser = new htmlparser.Parser(handler);
+
+        req = http.request(options, function (res) {
+            //console.log('STATUS: ' + res.statusCode);
+            //console.log('HEADERS: ' + JSON.stringify(res.headers));
+
+            var alldata = "";
+            res.on('data', function (chunk) {
+                alldata = alldata + chunk;
+            });
+            res.on('error', function (e) {
+                console.log('problem with request: ' + e.message);
+            });
+            res.on('end', function () {
+                html_parser.parseComplete(alldata);
+            });
+        });
+
+        req.on('error', function (e) {
             console.log('problem with request: ' + e.message);
         });
-        res.on('end', function () {
-            html_parser.parseComplete(alldata);
-        });
-    });
 
-    req.on('error', function (e) {
-        console.log('problem with request: ' + e.message);
-    });
+        req.end();
+    },
+    initialize: function () {
+        /////////// Create and start the server to handle requests
+        http.createServer(function (request, response) {
+            // Extract the searchquery from the url
+            var url_parts = url.parse(request.url, true),
+                character = url_parts.query.character,
+                realm = url_parts.query.realm,
+                region = url_parts.query.region,
+                steps = url_parts.query.steps,
+                guild = url_parts.query.guild;
 
-    req.end();
-}
+            if (!region || !realm || !(character || guild)) {
+                // Tell the client the search params were not correct
+                response.writeHead(200, {'Content-Type': 'text/html'});
+                response.end('Invalid call, please specify region, realm as well as character or guild.\n Something like this: '
+                    + '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=tarren-mill&character=kungen" > wowfeed.herokuapp.com/?region=eu&realm=tarren-mill&character=kungen </a>');
+            } else {
+                // Tell the client that return value is of rss type
+                response.writeHead(200, {'Content-Type': 'application/rss+xml'});
 
-/////////// Create and start the server to handle requests
-http.createServer(function (request, response) {
-    // Extract the searchquery from the url
-    var url_parts = url.parse(request.url, true),
-        character = url_parts.query.character,
-        realm = url_parts.query.realm,
-        region = url_parts.query.region,
-        steps = url_parts.query.steps,
-        guild = url_parts.query.guild;
+                armory = require('armory').defaults({
+                    realm: realm,
+                    region: region
+                });
 
-    if (!region || !realm || !(character || guild)) {
-        // Tell the client the search params were not correct
-        response.writeHead(200, {'Content-Type': 'text/html'});
-        response.end('Invalid call, please specify region, realm as well as character or guild.\n Something like this: '
-            + '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=tarren-mill&character=kungen" > wowfeed.herokuapp.com/?region=eu&realm=tarren-mill&character=kungen </a>');
-    } else {
-        // Tell the client that return value is of rss type
-        response.writeHead(200, {'Content-Type': 'application/rss+xml'});
+                if (character) {
+                    app.process_char_query(region, realm, character, steps, response);
+                } else if (guild) {
+                    app.process_guild_query(region, realm, guild, steps, response);
+                }
+            }
+        }).listen(port);
 
-        armory = require('armory').defaults({
-            realm: realm,
-            region: region
-        });
-
-        if (character) {
-            process_char_query(region, realm, character, steps, response);
-        } else if (guild) {
-            process_guild_query(region, realm, guild, steps, response);
-        }
+        console.log('Server running at http://localhost:' + port);
     }
-}).listen(port);
+};
 
-console.log('Server running at http://localhost:' + port);
+app.initialize();

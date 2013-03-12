@@ -1,6 +1,6 @@
 {
     "name": "wowfeed",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "dependencies": {
         "armory": "",
         "htmlparser": "",
@@ -9,7 +9,7 @@
         "wowhead": ""
     },
     "engines": {
-        "node": "0.8.x",
-        "npm": "1.1.x"
+        "node": "0.10.x",
+        "npm": "1.2.x"
     }
 }
