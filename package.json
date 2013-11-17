@@ -5,8 +5,7 @@
         "armory": "",
         "htmlparser": "",
         "request": "",
-        "rss": "0.1.0",
-        "wowhead": ""
+        "rss": "0.1.0"
     },
     "engines": {
         "node": "0.10.x",
