@@ -1,7 +1,7 @@
 "use strict";
 
 var http = require('http'),
-    rss = require('rss'),
+    RSS = require('rss'),
     url = require('url'),
     armory = require('armory'),
     htmlparser = require('htmlparser');
@@ -163,7 +163,7 @@ var app = {
 
                 outstandingCalls = js.news.length;
 
-                feed = new rss({
+                feed = new RSS({
                     title: feedUtil.capitalize(guild) + ' on ' + feedUtil.capitalize(realm),
                     description: 'rss feed generated from blizzards json feed-api',
                     feed_url: 'http://' + options.host + options.path,
@@ -192,9 +192,6 @@ var app = {
         html_parser = new htmlparser.Parser(handler);
 
         req = http.request(options, function (res) {
-            //console.log('STATUS: ' + res.statusCode);
-            //console.log('HEADERS: ' + JSON.stringify(res.headers));
-
             var alldata = "";
             res.on('data', function (chunk) {
                 alldata = alldata + chunk;
@@ -251,7 +248,7 @@ var app = {
 
                 outstandingCalls = js.feed.length;
 
-                feed = new rss({
+                feed = new RSS({
                     title: feedUtil.capitalize(character) + ' on ' + feedUtil.capitalize(realm),
                     description: 'rss feed generated from blizzards json feed-api',
                     feed_url: 'http://' + options.host + options.path,
