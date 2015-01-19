@@ -6,8 +6,6 @@ var http = require('http'),
     armory = require('armory'),
     htmlparser = require('htmlparser'),
 
-    os = require('os'),
-    server = os.hostname(),
     port = process.env.PORT || 3000,
 
     qualityColor = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
@@ -358,7 +356,7 @@ var app = {
             }
         }).listen(port);
 
-        console.log('Server running at ' + server + ':' + port);
+        console.log('Server running at port: ' + port);
     }
 };
 
