@@ -46,7 +46,11 @@ var armoryItem = {
             break;
 
         case ("CRITERIA"):
-            rss.title = "Completed the step '" + item.criteria.description + "' of achievement '" + item.achievement.title + "'";
+            if (item.criteria.description !== '') {
+                rss.title = "Completed step '" + item.criteria.description + "' of achievement '" + item.achievement.title + "'";
+            } else {
+                rss.title = "Completed step of achievement '" + item.achievement.title + "'";
+            }
             rss.description = "Completed step <strong style='color: #fef092'>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
             callback(null, rss);
