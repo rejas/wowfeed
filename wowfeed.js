@@ -4,11 +4,13 @@ var http = require('http'),
     RSS = require('rss'),
     url = require('url'),
     armory = require('armory'),
-    htmlparser = require('htmlparser');
+    htmlparser = require('htmlparser'),
 
-var port = process.env.PORT || 3000;
+    os = require('os'),
+    server = os.hostname(),
+    port = process.env.PORT || 3000,
 
-var qualityColor = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
+    qualityColor = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
 
 var armoryItem = {
 
@@ -30,46 +32,13 @@ var armoryItem = {
                "<a href='http://www.wowhead.com/achievement=" + res.id + "' style='color: #e1b105; text-decoration: none'>" + res.title + "</a>";
     },
 
-    processitem: function (item, basecharurl, callback) {
+    processGuildItem: function (item, basecharurl, callback) {
         var rss = {};
         rss.categories = [item.type];
         rss.date = item.timestamp;
         rss.guid = item.timestamp;
 
         switch (item.type) {
-
-        case ("ACHIEVEMENT"):
-            rss.title = "Earned the achievement '" + item.achievement.title + "'";
-            rss.description = "Earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
-            rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
-            callback(null, rss);
-            break;
-
-        case ("CRITERIA"):
-            if (item.criteria.description !== '') {
-                rss.title = "Completed step '" + item.criteria.description + "' of achievement '" + item.achievement.title + "'";
-            } else {
-                rss.title = "Completed step of achievement '" + item.achievement.title + "'";
-            }
-            rss.description = "Completed step <strong style='color: #fef092'>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
-            rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
-            callback(null, rss);
-            break;
-
-        case ("LOOT"):
-            armory.item(item.itemId, function (err, res) {
-                rss.title = "Looted '" + res.name + "'";
-                rss.description = "Obtained " + armoryItem.generateItemLink(res);
-                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                callback(this, rss);
-            });
-            break;
-
-        case ("BOSSKILL"):
-            rss.title = "Killed " + item.name;
-            rss.description = item.quantity + " " + item.achievement.title;
-            callback(null, rss);
-            break;
 
         case ("playerAchievement"):
             rss.title = item.character + " earned the achievement '" + item.achievement.title + "'";
@@ -112,7 +81,55 @@ var armoryItem = {
             break;
 
         default:
-            console.log("Unhandled type: " + item.type);
+            console.log("Unhandled guild item type: " + item.type);
+            callback(null, rss);
+            break;
+        }
+    },
+
+    processCharacterItem: function (item, basecharurl, callback) {
+        var rss = {};
+        rss.categories = [item.type];
+        rss.date = item.timestamp;
+        rss.guid = item.timestamp;
+
+        switch (item.type) {
+
+        case ("ACHIEVEMENT"):
+            rss.title = "Earned the achievement '" + item.achievement.title + "'";
+            rss.description = "Earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
+            rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
+            callback(null, rss);
+            break;
+
+        case ("CRITERIA"):
+            if (item.criteria.description !== '') {
+                rss.title = "Completed step '" + item.criteria.description + "' of achievement '" + item.achievement.title + "'";
+            } else {
+                rss.title = "Completed step of achievement '" + item.achievement.title + "'";
+            }
+            rss.description = "Completed step <strong style='color: #fef092'>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
+            rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
+            callback(null, rss);
+            break;
+
+        case ("LOOT"):
+            armory.item(item.itemId, function (err, res) {
+                rss.title = "Looted '" + res.name + "'";
+                rss.description = "Obtained " + armoryItem.generateItemLink(res);
+                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
+                callback(this, rss);
+            });
+            break;
+
+        case ("BOSSKILL"):
+            rss.title = "Killed " + item.name;
+            rss.description = item.quantity + " " + item.achievement.title;
+            callback(null, rss);
+            break;
+
+        default:
+            console.log("Unhandled character item type: " + item.type);
             callback(null, rss);
             break;
         }
@@ -130,7 +147,7 @@ var feedUtil = {
 };
 
 var app = {
-    process_guild_query: function (region, realm, guild, steps, responseObj) {
+    process_guild_query: function (region, realm, guild, responseObj) {
         var handler,
             html_parser,
             req,
@@ -177,7 +194,7 @@ var app = {
 
                 // Loop over data and add to feed
                 js.news.forEach(function (item) {
-                    armoryItem.processitem(item, baseCharUrl, function (err, res) {
+                    armoryItem.processGuildItem(item, baseCharUrl, function (err, res) {
 
                         arr.push(res);
                         outstandingCalls -= 1;
@@ -215,7 +232,7 @@ var app = {
         req.end();
     },
 
-    process_char_query: function (region, realm, character, steps, responseObj) {
+    process_char_query: function (region, realm, character, showSteps, responseObj) {
         var handler,
             html_parser,
             req,
@@ -263,9 +280,9 @@ var app = {
 
                 // Loop over data and add to feed
                 js.feed.forEach(function (item) {
-                    armoryItem.processitem(item, baseCharUrl, function (err, res) {
+                    armoryItem.processCharacterItem(item, baseCharUrl, function (err, res) {
 
-                        if (steps !== "false" || item.type !== "CRITERIA") {
+                        if (showSteps !== "false" || item.type !== "CRITERIA") {
                             arr.push(res);
                         }
 
@@ -316,7 +333,7 @@ var app = {
                 character = url_parts.query.character,
                 realm = url_parts.query.realm,
                 region = url_parts.query.region,
-                steps = url_parts.query.steps,
+                showSteps = url_parts.query.steps,
                 guild = url_parts.query.guild;
 
             if (!region || !realm || !(character || guild)) {
@@ -334,14 +351,14 @@ var app = {
                 });
 
                 if (character) {
-                    app.process_char_query(region, realm, character, steps, response);
+                    app.process_char_query(region, realm, character, showSteps, response);
                 } else if (guild) {
-                    app.process_guild_query(region, realm, guild, steps, response);
+                    app.process_guild_query(region, realm, guild, response);
                 }
             }
         }).listen(port);
 
-        console.log('Server running at http://localhost:' + port);
+        console.log('Server running at ' + server + ':' + port);
     }
 };
 
