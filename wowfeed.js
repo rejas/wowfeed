@@ -85,7 +85,7 @@ var armoryItem = {
         }
     },
 
-    processCharacterItem: function (item, basecharurl, callback) {
+    processCharacterItem: function (item, callback) {
         var rss = {};
         rss.categories = [item.type];
         rss.date = item.timestamp;
@@ -112,11 +112,25 @@ var armoryItem = {
             break;
 
         case ("LOOT"):
+
             armory.item(item.itemId, function (err, res) {
-                rss.title = "Looted '" + res.name + "'";
-                rss.description = "Obtained " + armoryItem.generateItemLink(res);
-                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                callback(this, rss);
+
+                // TODO this deserves a rewrite
+                if (res.availableContexts && res.availableContexts[0] !== '') {
+
+                    armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err, res2) {
+                        rss.title = "Looted '" + res2.name + "'";
+                        rss.description = "Obtained " + armoryItem.generateItemLink(res2);
+                        rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg', type: 'image/jpg'};
+                        callback(this, rss);
+                    });
+
+                } else {
+                    rss.title = "Looted '" + res.name + "'";
+                    rss.description = "Obtained " + armoryItem.generateItemLink(res);
+                    rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
+                    callback(this, rss);
+                }
             });
             break;
 
@@ -278,7 +292,7 @@ var app = {
 
                 // Loop over data and add to feed
                 js.feed.forEach(function (item) {
-                    armoryItem.processCharacterItem(item, baseCharUrl, function (err, res) {
+                    armoryItem.processCharacterItem(item, function (err, res) {
 
                         if (showSteps !== "false" || item.type !== "CRITERIA") {
                             arr.push(res);
