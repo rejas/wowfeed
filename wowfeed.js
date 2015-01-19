@@ -3,7 +3,7 @@
 var http = require('http'),
     RSS = require('rss'),
     url = require('url'),
-    armory = require('armory'),
+    armory = require('./armory'),
     htmlparser = require('htmlparser'),
 
     port = process.env.PORT || 3000,
@@ -343,7 +343,7 @@ var app = {
                 // Tell the client that return value is of rss type
                 response.writeHead(200, {'Content-Type': 'application/rss+xml'});
 
-                armory = require('armory').defaults({
+                armory = armory.defaults({
                     realm: realm,
                     region: region
                 });
