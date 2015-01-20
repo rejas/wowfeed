@@ -42,7 +42,7 @@ var armoryItem = {
             rss.title = item.character + " earned the achievement '" + item.achievement.title + "'";
             rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
-            callback(null, rss);
+            callback(rss);
             break;
 
         case ("itemPurchase"):
@@ -50,7 +50,7 @@ var armoryItem = {
                 rss.title = item.character + " purchased '" + res.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> purchased item " + armoryItem.generateItemLink(res);
                 rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                callback(this, rss);
+                callback(rss, err);
             });
             break;
 
@@ -59,7 +59,7 @@ var armoryItem = {
                 rss.title = item.character + " looted '" + res.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + armoryItem.generateItemLink(res);
                 rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                callback(this, rss);
+                callback(rss, err);
             });
             break;
 
@@ -68,19 +68,19 @@ var armoryItem = {
                 rss.title = item.character + " crafted '" + res.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> crafted item " + armoryItem.generateItemLink(res);
                 rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                callback(this, rss);
+                callback(rss, err);
             });
             break;
 
         case ("guildAchievement"):
             rss.title = "Guild earned '" + item.achievement.title + "'";
             rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
-            callback(null, rss);
+            callback(rss);
             break;
 
         default:
             console.log("Unhandled guild item type: " + item.type);
-            callback(null, rss);
+            callback(rss);
             break;
         }
     },
@@ -97,7 +97,7 @@ var armoryItem = {
             rss.title = "Earned the achievement '" + item.achievement.title + "'";
             rss.description = "Earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
-            callback(null, rss);
+            callback(rss);
             break;
 
         case ("CRITERIA"):
@@ -108,7 +108,7 @@ var armoryItem = {
             }
             rss.description = "Completed step <strong style='color: #fef092'>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
-            callback(null, rss);
+            callback(rss);
             break;
 
         case ("LOOT"):
@@ -118,18 +118,18 @@ var armoryItem = {
                 // TODO this deserves a rewrite
                 if (res.availableContexts && res.availableContexts[0] !== '') {
 
-                    armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err, res2) {
+                    armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
                         rss.title = "Looted '" + res2.name + "'";
                         rss.description = "Obtained " + armoryItem.generateItemLink(res2);
                         rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg', type: 'image/jpg'};
-                        callback(this, rss);
+                        callback(rss, err2);
                     });
 
                 } else {
                     rss.title = "Looted '" + res.name + "'";
                     rss.description = "Obtained " + armoryItem.generateItemLink(res);
                     rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                    callback(this, rss);
+                    callback(rss, err);
                 }
             });
             break;
@@ -141,12 +141,12 @@ var armoryItem = {
                 rss.title = "Killed Boss";
             }
             rss.description = item.quantity + " " + item.achievement.title;
-            callback(null, rss);
+            callback(rss);
             break;
 
         default:
             console.log("Unhandled character item type: " + item.type);
-            callback(null, rss);
+            callback(rss);
             break;
         }
     }
@@ -210,9 +210,9 @@ var app = {
 
                 // Loop over data and add to feed
                 js.news.forEach(function (item) {
-                    armoryItem.processGuildItem(item, baseCharUrl, function (err, res) {
+                    armoryItem.processGuildItem(item, baseCharUrl, function (result, error) {
 
-                        arr.push(res);
+                        arr.push(result);
                         outstandingCalls -= 1;
                         if (outstandingCalls === 0) {
                             arr.sort(feedUtil.sortRSS);
@@ -296,10 +296,10 @@ var app = {
 
                 // Loop over data and add to feed
                 js.feed.forEach(function (item) {
-                    armoryItem.processCharacterItem(item, function (err, res) {
+                    armoryItem.processCharacterItem(item, function (result, error) {
 
                         if (showSteps !== "false" || item.type !== "CRITERIA") {
-                            arr.push(res);
+                            arr.push(result);
                         }
 
                         outstandingCalls -= 1;
