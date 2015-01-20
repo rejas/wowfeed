@@ -135,7 +135,11 @@ var armoryItem = {
             break;
 
         case ("BOSSKILL"):
-            rss.title = "Killed " + item.name;
+            if (item.name != "") {
+                rss.title = "Killed " + item.name;
+            } else {
+                rss.title = "Killed Boss";
+            }
             rss.description = item.quantity + " " + item.achievement.title;
             callback(null, rss);
             break;
