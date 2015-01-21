@@ -5,9 +5,11 @@ var http = require('http'),
     url = require('url'),
     armory = require('./armory'),
     htmlparser = require('htmlparser'),
+    pjson = require('./package.json'),
 
+    version = pjson.version,
     port = process.env.PORT || 3000,
-    max_feed_item = 10,
+    max_feed_item = 20,
 
     qualityColor = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
 
@@ -218,7 +220,7 @@ var app = {
 
                 feed = new RSS({
                     title: feedUtil.capitalize(guild) + ' on ' + feedUtil.capitalize(realm),
-                    description: 'rss feed generated from blizzards json feed-api',
+                    description: 'rss feed generated from blizzards json feed-api, version '+ version,
                     feed_url: 'http://' + options.host + options.path,
                     site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
                     author: 'wowfeed@herokuapp.com'
@@ -311,7 +313,7 @@ var app = {
 
                 feed = new RSS({
                     title: feedUtil.capitalize(character) + ' on ' + feedUtil.capitalize(realm),
-                    description: 'rss feed generated from blizzards json feed-api',
+                    description: 'rss feed generated from blizzards json feed-api, version '+ version,
                     feed_url: 'http://' + options.host + options.path,
                     site_url: baseCharUrl + character + '/feed',
                     image_url: 'http://' + options.host + '/static-render/' + region + '/' + js.thumbnail,
@@ -373,6 +375,7 @@ var app = {
     },
 
     initialize: function () {
+
         /////////// Create and start the server to handle requests
         http.createServer(function (request, response) {
             // Extract the searchquery from the url
@@ -386,8 +389,11 @@ var app = {
             if (!region || !realm || !(character || guild)) {
                 // Tell the client the search params were not correct
                 response.writeHead(200, {'Content-Type': 'text/html'});
-                response.end('Invalid call, please specify region, realm as well as character or guild.\n Something like this: '
-                    + '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=khazgoroth&character=grimstone" > wowfeed.herokuapp.com/?region=eu&realm=khazgoroth&character=grimstone </a>');
+                response.write("wowfeed version " + version + "<br>");
+                response.write("Invalid call, please specify region, realm as well as character or guild.<br>");
+                response.end('Something like this: ' +
+                    '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=khazgoroth&character=grimstone" > ' +
+                    'wowfeed.herokuapp.com/?region=eu&realm=khazgoroth&character=grimstone </a>');
             } else {
                 // Tell the client that return value is of rss type
                 response.writeHead(200, {'Content-Type': 'application/rss+xml'});
