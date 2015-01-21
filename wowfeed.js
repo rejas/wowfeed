@@ -7,6 +7,7 @@ var http = require('http'),
     htmlparser = require('htmlparser'),
 
     port = process.env.PORT || 3000,
+    max_feed_item = 10,
 
     qualityColor = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
 
@@ -56,10 +57,23 @@ var armoryItem = {
 
         case ("itemLoot"):
             armory.item(item.itemId, function (err, res) {
-                rss.title = item.character + " looted '" + res.name + "'";
-                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + armoryItem.generateItemLink(res);
-                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                callback(rss, err);
+
+                // TODO this deserves a rewrite
+                if (res.availableContexts && res.availableContexts[0] !== '') {
+
+                    armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
+                        rss.title = item.character + " looted '" + res2.name + "'";
+                        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + armoryItem.generateItemLink(res2);
+                        rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg', type: 'image/jpg'};
+                        callback(rss, err2);
+                    });
+
+                } else {
+                    rss.title = item.character + " looted '" + res.name + "'";
+                    rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + armoryItem.generateItemLink(res);
+                    rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
+                    callback(rss, err);
+                }
             });
             break;
 
@@ -178,6 +192,7 @@ var app = {
             if (!error) {
                 var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
                     outstandingCalls,
+                    feedItems,
                     arr = [],
                     feed,
                     js;
@@ -198,7 +213,8 @@ var app = {
                     return;
                 }
 
-                outstandingCalls = js.news.length;
+                feedItems = Math.min(js.news.length, max_feed_item);
+                outstandingCalls = feedItems;
 
                 feed = new RSS({
                     title: feedUtil.capitalize(guild) + ' on ' + feedUtil.capitalize(realm),
@@ -209,10 +225,13 @@ var app = {
                 });
 
                 // Loop over data and add to feed
-                js.news.forEach(function (item) {
+                for (var i=0; i < feedItems; i++) {
+                    var item = js.news[i];
                     armoryItem.processGuildItem(item, baseCharUrl, function (result, error) {
 
-                        arr.push(result);
+                        if (!error)
+                            arr.push(result);
+
                         outstandingCalls -= 1;
                         if (outstandingCalls === 0) {
                             arr.sort(feedUtil.sortRSS);
@@ -222,13 +241,15 @@ var app = {
                             responseObj.end();
                         }
                     });
-                });
+                }
             }
         });
 
         html_parser = new htmlparser.Parser(handler);
 
         req = http.request(options, function (res) {
+            console.log('STATUS: ' + res.statusCode);
+            console.log('HEADERS: ' + JSON.stringify(res.headers));
             var alldata = "";
             res.on('data', function (chunk) {
                 alldata = alldata + chunk;
@@ -237,6 +258,7 @@ var app = {
                 console.log('problem with request: ' + e.message);
             });
             res.on('end', function () {
+                console.log(alldata);
                 html_parser.parseComplete(alldata);
             });
         });
@@ -262,6 +284,7 @@ var app = {
         handler = new htmlparser.DefaultHandler(function (error, dom) {
             if (!error) {
                 var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
+                    feedItems,
                     outstandingCalls,
                     arr = [],
                     feed,
@@ -283,7 +306,8 @@ var app = {
                     return;
                 }
 
-                outstandingCalls = js.feed.length;
+                feedItems = Math.min(js.feed.length, max_feed_item);
+                outstandingCalls = feedItems;
 
                 feed = new RSS({
                     title: feedUtil.capitalize(character) + ' on ' + feedUtil.capitalize(realm),
@@ -295,32 +319,38 @@ var app = {
                 });
 
                 // Loop over data and add to feed
-                js.feed.forEach(function (item) {
-                    armoryItem.processCharacterItem(item, function (result, error) {
+                for (var i=0; i < feedItems; i++) {
+                    var item = js.feed[i];
 
-                        if (showSteps !== "false" || item.type !== "CRITERIA") {
-                            arr.push(result);
-                        }
+                    if (showSteps !== "false" || item.type !== "CRITERIA") {
 
+                        armoryItem.processCharacterItem(item, function (result, error) {
+
+                            if (!error)
+                                arr.push(result);
+
+                            outstandingCalls -= 1;
+
+                            if (outstandingCalls === 0) {
+                                arr.sort(feedUtil.sortRSS);
+                                feed.items = arr;
+                                //Print the RSS feed out as response
+                                responseObj.write(feed.xml());
+                                responseObj.end();
+                            }
+                        });
+                    } else {
                         outstandingCalls -= 1;
-
-                        if (outstandingCalls === 0) {
-                            arr.sort(feedUtil.sortRSS);
-                            feed.items = arr;
-                            //Print the RSS feed out as response
-                            responseObj.write(feed.xml());
-                            responseObj.end();
-                        }
-                    });
-                });
+                    }
+                }
             }
         });
 
         html_parser = new htmlparser.Parser(handler);
 
         req = http.request(options, function (res) {
-            //console.log('STATUS: ' + res.statusCode);
-            //console.log('HEADERS: ' + JSON.stringify(res.headers));
+            console.log('STATUS: ' + res.statusCode);
+            console.log('HEADERS: ' + JSON.stringify(res.headers));
 
             var alldata = "";
             res.on('data', function (chunk) {
@@ -330,6 +360,7 @@ var app = {
                 console.log('problem with request: ' + e.message);
             });
             res.on('end', function () {
+                console.log(alldata);
                 html_parser.parseComplete(alldata);
             });
         });
