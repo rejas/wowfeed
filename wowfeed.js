@@ -4,6 +4,7 @@ var http = require('http'),
     RSS = require('rss'),
     url = require('url'),
     armory = require('./armory'),
+    utils = require('./utils'),
     htmlparser = require('htmlparser'),
     pjson = require('./package.json'),
 
@@ -15,29 +16,32 @@ var http = require('http'),
 
 var armoryItem = {
 
-    styleChar: function (c) {
-        return "style='text-decoration: none'";
+    styleItem: function (item) {
+        return "style='color: " + qualityColor[item.quality] + "; text-decoration: none'";
     },
 
-    styleItem: function (i) {
-        return "style='color: " + qualityColor[i.quality] + "; text-decoration: none'";
+    generateItemLink: function (item) {
+        return "<img src='http://media.blizzard.com/wow/icons/18/" + item.icon + ".jpg'/>" +
+            "<a href='http://www.wowhead.com/item=" + item.id + "' " + this.styleItem(item) + ">" + item.name + "</a>";
     },
 
-    generateItemLink: function (res) {
-        return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
-            "<a href='http://www.wowhead.com/item=" + res.id + "' " + this.styleItem(res) + ">" + res.name + "</a>";
+    generateAchievementLink: function (achievement) {
+        return "<img src='http://media.blizzard.com/wow/icons/18/" + achievement.icon + ".jpg'/>" +
+                "<a href='http://www.wowhead.com/achievement=" + achievement.id +
+                "' style='color: #e1b105; text-decoration: none'>" + achievement.title + "</a>";
     },
 
-    generateAchievementLink: function (res) {
-        return "<img src='http://media.blizzard.com/wow/icons/18/" + res.icon + ".jpg'/>" +
-               "<a href='http://www.wowhead.com/achievement=" + res.id + "' style='color: #e1b105; text-decoration: none'>" + res.title + "</a>";
+    createRssItem: function (item) {
+        return {
+            categories: [item.type],
+            date: item.timestamp,
+            guid: item.timestamp
+        };
     },
 
     processGuildItem: function (item, basecharurl, callback) {
-        var rss = {};
-        rss.categories = [item.type];
-        rss.date = item.timestamp;
-        rss.guid = item.timestamp;
+
+        var rss = this.createRssItem(item);
 
         switch (item.type) {
 
@@ -88,7 +92,7 @@ var armoryItem = {
                     armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
                         rss.title = item.character + " crafted '" + res2.name + "'";
                         rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
-                        "</a> crafted item " + armoryItem.generateItemLink(res2);
+                            "</a> crafted item " + armoryItem.generateItemLink(res2);
                         rss.enclosure = {
                             url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg',
                             type: 'image/jpg'
@@ -123,10 +127,7 @@ var armoryItem = {
     },
 
     processCharacterItem: function (item, callback) {
-        var rss = {};
-        rss.categories = [item.type];
-        rss.date = item.timestamp;
-        rss.guid = item.timestamp;
+        var rss = this.createRssItem(item);
 
         switch (item.type) {
 
@@ -189,16 +190,6 @@ var armoryItem = {
     }
 };
 
-var feedUtil = {
-    sortRSS: function (a, b) {
-        return (b.date - a.date);
-    },
-
-    capitalize: function (string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-};
-
 var app = {
     process_guild_query: function (region, realm, guild, responseObj) {
         var handler,
@@ -240,8 +231,8 @@ var app = {
                 outstandingCalls = feedItems;
 
                 feed = new RSS({
-                    title: feedUtil.capitalize(guild) + ' on ' + feedUtil.capitalize(realm),
-                    description: 'rss feed generated from blizzards json feed-api, version '+ version,
+                    title: utils.capitalize(guild) + ' on ' + utils.capitalize(realm),
+                    description: 'rss feed generated from blizzards json feed-api, version ' + version,
                     feed_url: 'http://' + options.host + options.path,
                     site_url: 'http://' + options.host + '/wow/guild/' + realm + '/' + guild + '/feed',
                     author: 'wowfeed@herokuapp.com'
@@ -257,7 +248,7 @@ var app = {
 
                         outstandingCalls -= 1;
                         if (outstandingCalls === 0) {
-                            arr.sort(feedUtil.sortRSS);
+                            arr.sort(urils.sortDate);
                             feed.items = arr;
                             //Print the RSS feed out as response
                             responseObj.write(feed.xml());
@@ -333,8 +324,8 @@ var app = {
                 outstandingCalls = feedItems;
 
                 feed = new RSS({
-                    title: feedUtil.capitalize(character) + ' on ' + feedUtil.capitalize(realm),
-                    description: 'rss feed generated from blizzards json feed-api, version '+ version,
+                    title: utils.capitalize(character) + ' on ' + utils.capitalize(realm),
+                    description: 'rss feed generated from blizzards json feed-api, version ' + version,
                     feed_url: 'http://' + options.host + options.path,
                     site_url: baseCharUrl + character + '/feed',
                     image_url: 'http://' + options.host + '/static-render/' + region + '/' + js.thumbnail,
@@ -355,7 +346,7 @@ var app = {
                             outstandingCalls -= 1;
 
                             if (outstandingCalls === 0) {
-                                arr.sort(feedUtil.sortRSS);
+                                arr.sort(utils.sortDate);
                                 feed.items = arr;
                                 //Print the RSS feed out as response
                                 responseObj.write(feed.xml());
