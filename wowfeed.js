@@ -81,10 +81,31 @@ var armoryItem = {
 
         case ("itemCraft"):
             armory.item(item.itemId, function (err, res) {
-                rss.title = item.character + " crafted '" + res.name + "'";
-                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> crafted item " + armoryItem.generateItemLink(res);
-                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                callback(rss, err);
+
+                // TODO this deserves a rewrite
+                if (res.availableContexts && res.availableContexts[0] !== '') {
+
+                    armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
+                        rss.title = item.character + " crafted '" + res2.name + "'";
+                        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
+                        "</a> crafted item " + armoryItem.generateItemLink(res2);
+                        rss.enclosure = {
+                            url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg',
+                            type: 'image/jpg'
+                        };
+                        callback(rss, err2);
+                    });
+
+                } else {
+                    rss.title = item.character + " crafted '" + res.name + "'";
+                    rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
+                        "</a> crafted item " + armoryItem.generateItemLink(res);
+                    rss.enclosure = {
+                        url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg',
+                        type: 'image/jpg'
+                    };
+                    callback(rss, err);
+                }
             });
             break;
 
