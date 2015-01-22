@@ -3,7 +3,7 @@
   "description": "rss feed generator for the world of warcraft armory",
   "repository": "git@heroku.com:wowfeed.git",
   "private": true,
-  "version": "0.4.1",
+  "version": "0.4.2",
   "dependencies": {
     "htmlparser": "^1.7.7",
     "request": "^2.51.0",
