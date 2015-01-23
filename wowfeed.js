@@ -1,15 +1,15 @@
 "use strict";
 
-var http = require('http'),
-    RSS = require('rss'),
-    url = require('url'),
-    armory = require('./armory'),
-    utils = require('./utils'),
+var http    = require('http'),
+    RSS     = require('rss'),
+    url     = require('url'),
+    armory  = require('./armory'),
+    utils   = require('./utils'),
     htmlparser = require('htmlparser'),
-    pjson = require('./package.json'),
+    pjson   = require('./package.json'),
 
     version = pjson.version,
-    port = process.env.PORT || 3000,
+    port    = process.env.PORT || 3000,
     max_feed_item = 20,
 
     qualityColor = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
@@ -22,7 +22,7 @@ var armoryItem = {
 
     generateItemLink: function (item) {
         return "<img src='http://media.blizzard.com/wow/icons/18/" + item.icon + ".jpg'/>" +
-            "<a href='http://www.wowhead.com/item=" + item.id + "' " + this.styleItem(item) + ">" + item.name + "</a>";
+                "<a href='http://www.wowhead.com/item=" + item.id + "' " + this.styleItem(item) + ">" + item.name + "</a>";
     },
 
     generateAchievementLink: function (achievement) {
@@ -47,7 +47,9 @@ var armoryItem = {
 
         case ("playerAchievement"):
             rss.title = item.character + " earned the achievement '" + item.achievement.title + "'";
-            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
+            rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
+                " earned the achievement " + this.generateAchievementLink(item.achievement) +
+                " for " + item.achievement.points + " points.";
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
             callback(rss);
             break;
@@ -55,7 +57,8 @@ var armoryItem = {
         case ("itemPurchase"):
             armory.item(item.itemId, function (err, res) {
                 rss.title = item.character + " purchased '" + res.name + "'";
-                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> purchased item " + armoryItem.generateItemLink(res);
+                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
+                    " purchased item " + armoryItem.generateItemLink(res);
                 rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
                 callback(rss, err);
             });
@@ -69,14 +72,16 @@ var armoryItem = {
 
                     armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
                         rss.title = item.character + " looted '" + res2.name + "'";
-                        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + armoryItem.generateItemLink(res2);
+                        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
+                            "</a> obtained item " + armoryItem.generateItemLink(res2);
                         rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg', type: 'image/jpg'};
                         callback(rss, err2);
                     });
 
                 } else {
                     rss.title = item.character + " looted '" + res.name + "'";
-                    rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a> obtained item " + armoryItem.generateItemLink(res);
+                    rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
+                        "</a> obtained item " + armoryItem.generateItemLink(res);
                     rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
                     callback(rss, err);
                 }
@@ -115,7 +120,8 @@ var armoryItem = {
 
         case ("guildAchievement"):
             rss.title = "Guild earned '" + item.achievement.title + "'";
-            rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " + item.achievement.points + " points.";
+            rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for "
+                + item.achievement.points + " points.";
             callback(rss);
             break;
 
@@ -173,7 +179,7 @@ var armoryItem = {
             break;
 
         case ("BOSSKILL"):
-            if (item.name != "") {
+            if (item.name !== "") {
                 rss.title = "Killed " + item.name;
             } else {
                 rss.title = "Killed Boss";
@@ -209,7 +215,9 @@ var app = {
                     feedItems,
                     arr = [],
                     feed,
-                    js;
+                    item,
+                    js,
+                    i;
 
                 // Parse JSON we get from blizzard
                 try {
@@ -239,16 +247,17 @@ var app = {
                 });
 
                 // Loop over data and add to feed
-                for (var i=0; i < feedItems; i++) {
-                    var item = js.news[i];
+                for (i = 0; i < feedItems; i++) {
+                    item = js.news[i];
                     armoryItem.processGuildItem(item, baseCharUrl, function (result, error) {
 
-                        if (!error)
+                        if (!error) {
                             arr.push(result);
+                        }
 
                         outstandingCalls -= 1;
                         if (outstandingCalls === 0) {
-                            arr.sort(urils.sortDate);
+                            arr.sort(utils.sortDate);
                             feed.items = arr;
                             //Print the RSS feed out as response
                             responseObj.write(feed.xml());
@@ -302,7 +311,9 @@ var app = {
                     outstandingCalls,
                     arr = [],
                     feed,
-                    js;
+                    item,
+                    js,
+                    i;
 
                 // Parse JSON we get from blizzard
                 try {
@@ -333,15 +344,16 @@ var app = {
                 });
 
                 // Loop over data and add to feed
-                for (var i=0; i < feedItems; i++) {
-                    var item = js.feed[i];
+                for (i = 0; i < feedItems; i++) {
+                    item = js.feed[i];
 
                     if (showSteps !== "false" || item.type !== "CRITERIA") {
 
                         armoryItem.processCharacterItem(item, function (result, error) {
 
-                            if (!error)
+                            if (!error) {
                                 arr.push(result);
+                            }
 
                             outstandingCalls -= 1;
 
