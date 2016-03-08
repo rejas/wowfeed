@@ -6,8 +6,8 @@
   "version": "0.4.2",
   "dependencies": {
     "htmlparser": "^1.7.7",
-    "request": "^2.51.0",
-    "rss": "^0.3.2"
+    "request": "^2.69.0",
+    "rss": "^1.2.1"
   },
   "engines": {
     "node": "0.10.x",
