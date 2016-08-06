@@ -400,6 +400,25 @@ var app = {
         req.end();
     },
 
+
+
+    /**
+     * Tell the client the search params were not correct
+     * @param response
+     */
+    writeErrorPage: function (response) {
+        response.writeHead(200, {'Content-Type': 'text/html'});
+        response.write("wowfeed version " + version + "<br>");
+        response.write("Invalid call, please specify region, realm as well as character or guild.<br>");
+        response.write('Something like this for characters: ' +
+            '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&character=Grimstone" > ' +
+            'wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&character=Grimstone</a><br>');
+        response.write('or for guilds: ' +
+            '<a href="https://wowfeed.herokuapp.com/?region=eu&guild=Mokrah+Toktok&realm=Khaz%27Goroth" > ' +
+            'wowfeed.herokuapp.com/?region=eu&guild=Mokrah+Toktok&realm=Khaz%27Goroth</a><br>');
+        response.end();
+    },
+
     initialize: function () {
 
         /////////// Create and start the server to handle requests
@@ -413,13 +432,7 @@ var app = {
                 guild = url_parts.query.guild;
 
             if (!region || !realm || !(character || guild)) {
-                // Tell the client the search params were not correct
-                response.writeHead(200, {'Content-Type': 'text/html'});
-                response.write("wowfeed version " + version + "<br>");
-                response.write("Invalid call, please specify region, realm as well as character or guild.<br>");
-                response.end('Something like this: ' +
-                    '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=khazgoroth&character=grimstone" > ' +
-                    'wowfeed.herokuapp.com/?region=eu&realm=khazgoroth&character=grimstone </a>');
+                app.writeErrorPage(response);
             } else {
                 // Tell the client that return value is of rss type
                 response.writeHead(200, {'Content-Type': 'application/rss+xml'});
