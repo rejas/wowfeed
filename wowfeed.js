@@ -1,16 +1,18 @@
 "use strict";
 
-var http    = require('http'),
-    RSS     = require('rss'),
-    url     = require('url'),
-    armory  = require('./armory'),
-    utils   = require('./utils'),
-    htmlparser = require('htmlparser'),
-    pjson   = require('./package.json'),
+var http        = require('http'),
+    https       = require('https'),
+    RSS         = require('rss'),
+    url         = require('url'),
+    armory      = require('./armory'),
+    utils       = require('./utils'),
+    htmlparser  = require('htmlparser'),
+    pjson       = require('./package.json'),
 
-    version = pjson.version,
-    port    = process.env.PORT || 3000,
-    max_feed_item = 20,
+    version         = pjson.version,
+    port            = process.env.PORT || 3000,
+    max_feed_item   = 20,
+    key             = process.env.wowPublicKey,
 
     qualityColor = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
 
@@ -202,15 +204,15 @@ var app = {
             html_parser,
             req,
             options = {
-                host: region + '.battle.net',
-                path: encodeURI('/api/wow/guild/' + realm + '/' + guild + '?fields=news')
+                host: region + '.api.battle.net',
+                path: encodeURI('/wow/guild/' + realm + '/' + guild + '?fields=news&apikey='+key)
             };
 
         console.log("Fetching " + options.host + options.path);
 
         handler = new htmlparser.DefaultHandler(function (error, dom) {
             if (!error) {
-                var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
+                var baseCharUrl = 'https://' + options.host + '/wow/character/' + realm + '/',
                     outstandingCalls,
                     feedItems,
                     arr = [],
@@ -270,7 +272,7 @@ var app = {
 
         html_parser = new htmlparser.Parser(handler);
 
-        req = http.request(options, function (res) {
+        req = https.request(options, function (res) {
             console.log('STATUS: ' + res.statusCode);
             console.log('HEADERS: ' + JSON.stringify(res.headers));
             var alldata = "";
@@ -298,15 +300,15 @@ var app = {
             html_parser,
             req,
             options = {
-                host: region + '.battle.net',
-                path: encodeURI('/api/wow/character/' + realm + '/' + character + '?fields=feed')
+                host: region + '.api.battle.net',
+                path: encodeURI('/wow/character/' + realm + '/' + character + '?fields=feed&apikey='+key)
             };
 
         console.log("Fetching " + options.host + options.path);
 
         handler = new htmlparser.DefaultHandler(function (error, dom) {
             if (!error) {
-                var baseCharUrl = 'http://' + options.host + '/wow/character/' + realm + '/',
+                var baseCharUrl = 'https://' + options.host + '/wow/character/' + realm + '/',
                     feedItems,
                     outstandingCalls,
                     arr = [],
@@ -374,7 +376,7 @@ var app = {
 
         html_parser = new htmlparser.Parser(handler);
 
-        req = http.request(options, function (res) {
+        req = https.request(options, function (res) {
             console.log('STATUS: ' + res.statusCode);
             console.log('HEADERS: ' + JSON.stringify(res.headers));
 
