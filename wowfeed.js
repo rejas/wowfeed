@@ -12,7 +12,7 @@ var http        = require('http'),
     version         = pjson.version,
     port            = process.env.PORT || 3000,
     max_feed_item   = 20,
-    key             = process.env.wowPublicKey,
+    key             = process.env.wowPublicKey || require('./secret.json').key,
 
     qualityColor = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
 
