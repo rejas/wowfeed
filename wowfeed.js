@@ -1,17 +1,15 @@
-"use strict";
+'use strict';
 
-var http        = require('http'),
-    https       = require('https'),
-    url         = require('url'),
-    RSS         = require('rss'),
-    utils       = require('./utils'),
-    pjson       = require('./package.json'),
-
+var http            = require('http'),
+    https           = require('https'),
+    url             = require('url'),
+    RSS             = require('rss'),
+    utils           = require('./utils'),
+    pjson           = require('./package.json'),
     version         = pjson.version,
     port            = process.env.PORT || 3000,
     key             = process.env.wowPublicKey || require('./secret.json').key,
     bnet            = require('battlenet-api')(key),
-
     qualityColor    = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
 
 var armoryItem = {
@@ -45,7 +43,7 @@ var armoryItem = {
 
         switch (item.type) {
 
-        case ("playerAchievement"):
+        case ('playerAchievement'):
             rss.title = item.character + " earned the achievement '" + item.achievement.title + "'";
             rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
                 " earned the achievement " + this.generateAchievementLink(item.achievement) +
@@ -54,7 +52,7 @@ var armoryItem = {
             callback(rss);
             break;
 
-        case ("itemPurchase"):
+        case ('itemPurchase'):
             bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
                 rss.title = item.character + " purchased '" + res.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
@@ -64,7 +62,7 @@ var armoryItem = {
             });
             break;
 
-        case ("itemLoot"):
+        case ('itemLoot'):
             bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
                 rss.title = item.character + " looted '" + body.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
@@ -72,28 +70,9 @@ var armoryItem = {
                 rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg', type: 'image/jpg'};
                 callback(rss, err);
             });
-            /*
-            armory.item(item.itemId, function (err, res) {
-                if (res.availableContexts && res.availableContexts[0] !== '') {
-                    armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
-                        rss.title = item.character + " looted '" + res2.name + "'";
-                        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
-                            "</a> obtained item " + armoryItem.generateItemLink(res2);
-                        rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg', type: 'image/jpg'};
-                        callback(rss, err2);
-                    });
-                } else {
-                    rss.title = item.character + " looted '" + res.name + "'";
-                    rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
-                        "</a> obtained item " + armoryItem.generateItemLink(res);
-                    rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                    callback(rss, err);
-                }
-            });
-            */
             break;
 
-        case ("itemCraft"):
+        case ('itemCraft'):
             bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
                 rss.title = item.character + " crafted '" + body.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
@@ -104,34 +83,9 @@ var armoryItem = {
                 };
                 callback(rss, err);
             });
-            /*
-            armory.item(item.itemId, function (err, res) {
-                if (res.availableContexts && res.availableContexts[0] !== '') {
-                    armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
-                        rss.title = item.character + " crafted '" + res2.name + "'";
-                        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
-                            "</a> crafted item " + armoryItem.generateItemLink(res2);
-                        rss.enclosure = {
-                            url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg',
-                            type: 'image/jpg'
-                        };
-                        callback(rss, err2);
-                    });
-                } else {
-                    rss.title = item.character + " crafted '" + res.name + "'";
-                    rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
-                        "</a> crafted item " + armoryItem.generateItemLink(res);
-                    rss.enclosure = {
-                        url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg',
-                        type: 'image/jpg'
-                    };
-                    callback(rss, err);
-                }
-            });
-            */
             break;
 
-        case ("guildAchievement"):
+        case ('guildAchievement'):
             rss.title = "Guild earned '" + item.achievement.title + "'";
             rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for "
                 + item.achievement.points + " points.";
@@ -150,14 +104,14 @@ var armoryItem = {
 
         switch (item.type) {
 
-        case ("ACHIEVEMENT"):
+        case ('ACHIEVEMENT'):
             rss.title = "Earned the achievement '" + item.achievement.title + "'";
             rss.description = "Earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
             callback(rss);
             break;
 
-        case ("CRITERIA"):
+        case ('CRITERIA'):
             if (item.criteria.description !== '') {
                 rss.title = "Completed step '" + item.criteria.description + "' of achievement '" + item.achievement.title + "'";
             } else {
@@ -168,46 +122,27 @@ var armoryItem = {
             callback(rss);
             break;
 
-        case ("LOOT"):
-
+        case ('LOOT'):
             bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
                 rss.title = "Looted '" + body.name + "'";
                 rss.description = "Obtained " + armoryItem.generateItemLink(body);
                 rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg', type: 'image/jpg'};
                 callback(rss, err);
             });
-            /*
-            armory.item(item.itemId, function (err, res) {
-                if (res.availableContexts && res.availableContexts[0] !== '') {
-
-                    armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
-                        rss.title = "Looted '" + res2.name + "'";
-                        rss.description = "Obtained " + armoryItem.generateItemLink(res2);
-                        rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg', type: 'image/jpg'};
-                        callback(rss, err2);
-                    });
-                } else {
-                    rss.title = "Looted '" + res.name + "'";
-                    rss.description = "Obtained " + armoryItem.generateItemLink(res);
-                    rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                    callback(rss, err);
-                }
-            });
-            */
             break;
 
-        case ("BOSSKILL"):
-            if (item.name !== "") {
-                rss.title = "Killed " + item.name;
+        case ('BOSSKILL'):
+            if (item.name !== '') {
+                rss.title = 'Killed ' + item.name;
             } else {
-                rss.title = "Killed Boss";
+                rss.title = 'Killed Boss';
             }
             rss.description = item.quantity + " " + item.achievement.title;
             callback(rss);
             break;
 
         default:
-            console.log("Unhandled character item type: " + item.type);
+            console.log('Unhandled character item type: ' + item.type);
             callback(rss);
             break;
         }
@@ -290,7 +225,7 @@ var app = {
         for (i = 0; i < feedItems; i++) {
             item = data.feed[i];
 
-            if (showSteps || item.type !== "CRITERIA") {
+            if (showSteps || item.type !== 'CRITERIA') {
 
                 armoryItem.processCharacterItem(item, function (result, error) {
 
@@ -316,7 +251,7 @@ var app = {
 
     handleStatus: function (data, response) {
         response.writeHead(200, {'Content-Type': 'text/html'});
-        response.write(data.status + ": " + data.reason);
+        response.write(data.status + ': ' + data.reason);
         response.end();
     },
 
@@ -326,8 +261,8 @@ var app = {
      */
     writeErrorPage: function (response) {
         response.writeHead(200, {'Content-Type': 'text/html'});
-        response.write("wowfeed version " + version + "<br>");
-        response.write("Invalid call, please specify region, realm as well as character or guild.<br>");
+        response.write('wowfeed version ' + version + '<br>');
+        response.write('Invalid call, please specify region, realm as well as character or guild.<br>');
         response.write('Something like this for characters: ' +
             '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&character=Grimstone" > ' +
             'wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&character=Grimstone</a><br>');
@@ -353,7 +288,7 @@ var app = {
                 guild: url_parts.query.guild,
                 realm: url_parts.query.realm,
                 region: url_parts.query.region,
-                showSteps: url_parts.query.steps !== "false",
+                showSteps: url_parts.query.steps !== 'false',
                 maxItems: url_parts.query.maxItems || 20
             };
 
