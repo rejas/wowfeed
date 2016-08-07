@@ -4,49 +4,25 @@ var http            = require('http'),
     https           = require('https'),
     url             = require('url'),
     RSS             = require('rss'),
-    utils           = require('./utils'),
+    utils           = require('./lib/utils'),
+    itemLink        = require('./lib/item'),
     pjson           = require('./package.json'),
     version         = pjson.version,
     port            = process.env.PORT || 3000,
     key             = process.env.wowPublicKey || require('./secret.json').key,
-    bnet            = require('battlenet-api')(key),
-    qualityColor    = ['#d9d9d', '#ffffff', '#1eff00', '#0070dd', '#a335ee', '#ff8000', '#e6cc80', '#e6cc80'];
+    bnet            = require('battlenet-api')(key);
 
 var armoryItem = {
 
-    styleItem: function (item) {
-        return "style='color: " + qualityColor[item.quality] + "; text-decoration: none'";
-    },
-
-    generateItemLink: function (item) {
-        return "<img src='http://media.blizzard.com/wow/icons/18/" + item.icon + ".jpg'/>" +
-                "<a href='http://www.wowhead.com/item=" + item.id + "' " + this.styleItem(item) + ">" + item.name + "</a>";
-    },
-
-    generateAchievementLink: function (achievement) {
-        return "<img src='http://media.blizzard.com/wow/icons/18/" + achievement.icon + ".jpg'/>" +
-                "<a href='http://www.wowhead.com/achievement=" + achievement.id +
-                "' style='color: #e1b105; text-decoration: none'>" + achievement.title + "</a>";
-    },
-
-    createRssItem: function (item) {
-        return {
-            categories: [item.type],
-            date: item.timestamp,
-            guid: item.timestamp
-        };
-    },
-
     processGuildItem: function (item, basecharurl, callback) {
-
-        var rss = this.createRssItem(item);
+        var rss = itemLink.createRssItem(item);
 
         switch (item.type) {
 
         case ('playerAchievement'):
             rss.title = item.character + " earned the achievement '" + item.achievement.title + "'";
             rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
-                " earned the achievement " + this.generateAchievementLink(item.achievement) +
+                " earned the achievement " + itemLink.generateAchievementLink(item.achievement) +
                 " for " + item.achievement.points + " points.";
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
             callback(rss);
@@ -56,7 +32,7 @@ var armoryItem = {
             bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
                 rss.title = item.character + " purchased '" + res.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
-                    " purchased item " + armoryItem.generateItemLink(res);
+                    " purchased item " + itemLink.generateItemLink(res);
                 rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
                 callback(rss, err);
             });
@@ -66,7 +42,7 @@ var armoryItem = {
             bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
                 rss.title = item.character + " looted '" + body.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
-                    "</a> obtained item " + armoryItem.generateItemLink(body);
+                    "</a> obtained item " + itemLink.generateItemLink(body);
                 rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg', type: 'image/jpg'};
                 callback(rss, err);
             });
@@ -76,7 +52,7 @@ var armoryItem = {
             bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
                 rss.title = item.character + " crafted '" + body.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
-                    "</a> crafted item " + armoryItem.generateItemLink(body);
+                    "</a> crafted item " + itemLink.generateItemLink(body);
                 rss.enclosure = {
                     url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg',
                     type: 'image/jpg'
@@ -100,13 +76,13 @@ var armoryItem = {
     },
 
     processCharacterItem: function (item, callback) {
-        var rss = this.createRssItem(item);
+        var rss = itemLink.createRssItem(item);
 
         switch (item.type) {
 
         case ('ACHIEVEMENT'):
             rss.title = "Earned the achievement '" + item.achievement.title + "'";
-            rss.description = "Earned the achievement " + this.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
+            rss.description = "Earned the achievement " + itemLink.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
             callback(rss);
             break;
@@ -117,7 +93,7 @@ var armoryItem = {
             } else {
                 rss.title = "Completed step of achievement '" + item.achievement.title + "'";
             }
-            rss.description = "Completed step <strong style='color: #fef092'>" + item.criteria.description + "</strong> of achievement " + this.generateAchievementLink(item.achievement);
+            rss.description = "Completed step <strong style='color: #fef092'>" + item.criteria.description + "</strong> of achievement " + itemLink.generateAchievementLink(item.achievement);
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
             callback(rss);
             break;
@@ -125,7 +101,7 @@ var armoryItem = {
         case ('LOOT'):
             bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
                 rss.title = "Looted '" + body.name + "'";
-                rss.description = "Obtained " + armoryItem.generateItemLink(body);
+                rss.description = "Obtained " + itemLink.generateItemLink(body);
                 rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg', type: 'image/jpg'};
                 callback(rss, err);
             });
