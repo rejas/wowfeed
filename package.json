@@ -6,8 +6,6 @@
   "version": "0.5.0",
   "dependencies": {
     "battlenet-api": "^0.12.0",
-    "htmlparser": "^1.7.7",
-    "request": "^2.69.0",
     "rss": "^1.2.1"
   },
   "engines": {

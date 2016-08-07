@@ -4,7 +4,6 @@ var http        = require('http'),
     https       = require('https'),
     url         = require('url'),
     RSS         = require('rss'),
-    armory      = require('./armory'),
     utils       = require('./utils'),
     pjson       = require('./package.json'),
 
@@ -56,7 +55,7 @@ var armoryItem = {
             break;
 
         case ("itemPurchase"):
-            armory.item(item.itemId, function (err, res) {
+            bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
                 rss.title = item.character + " purchased '" + res.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
                     " purchased item " + armoryItem.generateItemLink(res);
@@ -66,11 +65,16 @@ var armoryItem = {
             break;
 
         case ("itemLoot"):
+            bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
+                rss.title = item.character + " looted '" + body.name + "'";
+                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
+                    "</a> obtained item " + armoryItem.generateItemLink(body);
+                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg', type: 'image/jpg'};
+                callback(rss, err);
+            });
+            /*
             armory.item(item.itemId, function (err, res) {
-
-                // TODO this deserves a rewrite
                 if (res.availableContexts && res.availableContexts[0] !== '') {
-
                     armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
                         rss.title = item.character + " looted '" + res2.name + "'";
                         rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
@@ -78,7 +82,6 @@ var armoryItem = {
                         rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg', type: 'image/jpg'};
                         callback(rss, err2);
                     });
-
                 } else {
                     rss.title = item.character + " looted '" + res.name + "'";
                     rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
@@ -87,14 +90,23 @@ var armoryItem = {
                     callback(rss, err);
                 }
             });
+            */
             break;
 
         case ("itemCraft"):
+            bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
+                rss.title = item.character + " crafted '" + body.name + "'";
+                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
+                    "</a> crafted item " + armoryItem.generateItemLink(body);
+                rss.enclosure = {
+                    url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg',
+                    type: 'image/jpg'
+                };
+                callback(rss, err);
+            });
+            /*
             armory.item(item.itemId, function (err, res) {
-
-                // TODO this deserves a rewrite
                 if (res.availableContexts && res.availableContexts[0] !== '') {
-
                     armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
                         rss.title = item.character + " crafted '" + res2.name + "'";
                         rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
@@ -105,7 +117,6 @@ var armoryItem = {
                         };
                         callback(rss, err2);
                     });
-
                 } else {
                     rss.title = item.character + " crafted '" + res.name + "'";
                     rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
@@ -117,6 +128,7 @@ var armoryItem = {
                     callback(rss, err);
                 }
             });
+            */
             break;
 
         case ("guildAchievement"):
@@ -158,9 +170,14 @@ var armoryItem = {
 
         case ("LOOT"):
 
+            bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
+                rss.title = "Looted '" + body.name + "'";
+                rss.description = "Obtained " + armoryItem.generateItemLink(body);
+                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg', type: 'image/jpg'};
+                callback(rss, err);
+            });
+            /*
             armory.item(item.itemId, function (err, res) {
-
-                // TODO this deserves a rewrite
                 if (res.availableContexts && res.availableContexts[0] !== '') {
 
                     armory.item({ id: item.itemId, context: res.availableContexts[0] }, function (err2, res2) {
@@ -169,7 +186,6 @@ var armoryItem = {
                         rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res2.icon + '.jpg', type: 'image/jpg'};
                         callback(rss, err2);
                     });
-
                 } else {
                     rss.title = "Looted '" + res.name + "'";
                     rss.description = "Obtained " + armoryItem.generateItemLink(res);
@@ -177,6 +193,7 @@ var armoryItem = {
                     callback(rss, err);
                 }
             });
+            */
             break;
 
         case ("BOSSKILL"):
@@ -347,11 +364,6 @@ var app = {
 
             // Tell the client that return value is of rss type
             response.writeHead(200, {'Content-Type': 'application/rss+xml'});
-
-            armory = armory.defaults({
-                realm: app.options.realm,
-                region: app.options.region
-            });
 
             app.options.host = app.options.region + '.battle.net';
 
