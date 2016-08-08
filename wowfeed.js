@@ -14,7 +14,7 @@ var http        = require('http'),
 
 var armoryItem = {
 
-    processGuildItem: function (item, basecharurl, callback) {
+    processGuildItem: function (item, basecharurl) {
         var rss = itemLink.createRssItem(item);
 
         switch (item.type) {
@@ -25,54 +25,70 @@ var armoryItem = {
                 " earned the achievement " + itemLink.generateAchievementLink(item.achievement) +
                 " for " + item.achievement.points + " points.";
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
-            callback(rss);
             break;
 
         case ('itemPurchase'):
-            bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
-                rss.title = item.character + " purchased '" + res.name + "'";
-                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
-                    " purchased item " + itemLink.generateItemLink(res);
-                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
-                callback(rss, err);
-            });
+            return new Promise(
+                function (resolve, reject) {
+                    bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
+                        if (err) {
+                            reject(err);
+                        }
+                        rss.title = item.character + " purchased '" + res.name + "'";
+                        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
+                            " purchased item " + itemLink.generateItemLink(res);
+                        rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
+                        resolve(rss);
+                    });
+                });
             break;
 
         case ('itemLoot'):
-            bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
-                rss.title = item.character + " looted '" + body.name + "'";
-                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
-                    "</a> obtained item " + itemLink.generateItemLink(body);
-                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg', type: 'image/jpg'};
-                callback(rss, err);
-            });
+            return new Promise(
+                function (resolve, reject) {
+                    bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
+                        if (err) {
+                            reject(err);
+                        }
+                        rss.title = item.character + " looted '" + body.name + "'";
+                        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
+                            "</a> obtained item " + itemLink.generateItemLink(body);
+                        rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg', type: 'image/jpg'};
+                        resolve(rss);
+                    });
+                });
             break;
 
         case ('itemCraft'):
-            bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
-                rss.title = item.character + " crafted '" + body.name + "'";
-                rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
-                    "</a> crafted item " + itemLink.generateItemLink(body);
-                rss.enclosure = {
-                    url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg',
-                    type: 'image/jpg'
-                };
-                callback(rss, err);
-            });
+            return new Promise(
+                function (resolve, reject) {
+                    bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
+                        if (err) {
+                            reject(err);
+                        }
+                        rss.title = item.character + " crafted '" + body.name + "'";
+                        rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character +
+                            "</a> crafted item " + itemLink.generateItemLink(body);
+                        rss.enclosure = {
+                            url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg',
+                            type: 'image/jpg'
+                        };
+                        resolve(rss);
+                    });
+                });
             break;
 
         case ('guildAchievement'):
             rss.title = "Guild earned '" + item.achievement.title + "'";
             rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for "
                 + item.achievement.points + " points.";
-            callback(rss);
             break;
 
         default:
             console.log("Unhandled guild item type: " + item.type);
-            callback(rss);
             break;
         }
+        return rss;
     },
 
     processCharacterItem: function (item, callback) {
@@ -128,48 +144,42 @@ var armoryItem = {
 var app = {
     process_guild_response: function (data, response) {
         var baseCharUrl = 'https://' + app.options.host + '/wow/character/' + app.options.realm + '/',
-            feedItems,
-            outstandingCalls,
-            arr = [],
-            feed,
-            item,
-            i;
+            feed = new RSS({
+                title: utils.capitalize(app.options.guild) + ' on ' + utils.capitalize(app.options.realm),
+                description: 'rss feed generated from blizzards json feed-api, version ' + version,
+                feed_url: 'http://' + app.options.host + app.options.path,
+                site_url: 'http://' + app.options.host + '/wow/guild/' + app.options.realm + '/' + app.options.guild + '/feed',
+                author: 'wowfeed@veeck.de'
+            }),
+            allP = [];
 
         if (data.status) {
             app.handleStatus(data, response);
             return;
         }
 
-        feedItems = Math.min(data.news.length, app.options.maxItems);
-        outstandingCalls = feedItems;
-
-        feed = new RSS({
-            title: utils.capitalize(app.options.guild) + ' on ' + utils.capitalize(app.options.realm),
-            description: 'rss feed generated from blizzards json feed-api, version ' + version,
-            feed_url: 'http://' + app.options.host + app.options.path,
-            site_url: 'http://' + app.options.host + '/wow/guild/' + app.options.realm + '/' + app.options.guild + '/feed',
-            author: 'wowfeed@veeck.de'
+        data.news = data.news.slice(0, Math.min(data.news.length, app.options.maxItems));
+        data.news.forEach(function (item) {
+            var p = armoryItem.processGuildItem(item, baseCharUrl);
+            if (p instanceof Promise) {
+                allP.push(p);
+            } else {
+                feed.items.push(p);
+            }
         });
 
-        // Loop over data and add to feed
-        for (i = 0; i < feedItems; i++) {
-            item = data.news[i];
-            armoryItem.processGuildItem(item, baseCharUrl, function (result, error) {
-
-                if (!error) {
-                    arr.push(result);
-                }
-
-                outstandingCalls -= 1;
-                if (outstandingCalls === 0) {
-                    arr.sort(utils.sortByDate);
-                    feed.items = arr;
-                    //Print the RSS feed out as response
-                    response.write(feed.xml());
-                    response.end();
-                }
+        Promise.all(allP)
+            .then(function (data) {
+                data.forEach(function (d) {
+                    feed.items.push(d);
+                });
+                feed.items.sort(utils.sortByDate);
+                response.write(feed.xml());
+                response.end();
+            })
+            .catch(function (reason) {
+                // Receives first rejection among the promises
             });
-        }
     },
 
     process_char_response: function (data, response, showSteps) {
