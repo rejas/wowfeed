@@ -1,16 +1,16 @@
 'use strict';
 
-var http            = require('http'),
-    https           = require('https'),
-    url             = require('url'),
-    RSS             = require('rss'),
-    utils           = require('./lib/utils'),
-    itemLink        = require('./lib/item'),
-    pjson           = require('./package.json'),
-    version         = pjson.version,
-    port            = process.env.PORT || 3000,
-    key             = process.env.wowPublicKey || require('./secret.json').key,
-    bnet            = require('battlenet-api')(key);
+const   version = require('./package.json').version,
+        port    = process.env.PORT || 3000,
+        key     = process.env.wowPublicKey || require('./secret.json').key;
+
+var http        = require('http'),
+    https       = require('https'),
+    url         = require('url'),
+    RSS         = require('rss'),
+    bnet        = require('battlenet-api')(key),
+    utils       = require('./lib/utils'),
+    itemLink    = require('./lib/item');
 
 var armoryItem = {
 
