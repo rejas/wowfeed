@@ -2,7 +2,7 @@
   "name": "wowfeed",
   "description": "rss feed generator for the world of warcraft armory",
   "repository": "https://github.com/rejas/wow-feed.git",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "dependencies": {
     "battlenet-api": "^0.12.0",
     "rss": "^1.2.1"
