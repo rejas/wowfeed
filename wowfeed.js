@@ -15,7 +15,7 @@ var http        = require('http'),
 var armoryItem = {
 
     processGuildItem: function (item, basecharurl) {
-        var rss = itemLink.createRssItem(item);
+        var rss = utils.createRssItem(item);
 
         switch (item.type) {
 
@@ -89,7 +89,7 @@ var armoryItem = {
     },
 
     processCharacterItem: function (item) {
-        var rss = itemLink.createRssItem(item);
+        var rss = utils.createRssItem(item);
 
         switch (item.type) {
 
