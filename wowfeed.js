@@ -30,10 +30,10 @@ var armoryItem = {
 
         case ('itemPurchase'):
             bnet.wow.item.item({origin: app.options.region, id: item.itemId}, function(err, body, res) {
-                rss.title = item.character + " purchased '" + res.name + "'";
+                rss.title = item.character + " purchased '" + body.name + "'";
                 rss.description = "<a href='" + basecharurl + item.character + "/'> " + item.character + "</a>" +
-                    " purchased item " + itemLink.generateItemLink(res);
-                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + res.icon + '.jpg', type: 'image/jpg'};
+                    " purchased item " + itemLink.generateItemLink(body);
+                rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + body.icon + '.jpg', type: 'image/jpg'};
                 callback(rss, err);
             });
             break;
