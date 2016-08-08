@@ -41,7 +41,6 @@ var armoryItem = {
                         resolve(rss);
                     });
                 });
-            break;
 
         case ('itemLoot'):
             return new Promise(
@@ -57,7 +56,6 @@ var armoryItem = {
                         resolve(rss);
                     });
                 });
-            break;
 
         case ('itemCraft'):
             return new Promise(
@@ -76,12 +74,11 @@ var armoryItem = {
                         resolve(rss);
                     });
                 });
-            break;
 
         case ('guildAchievement'):
             rss.title = "Guild earned '" + item.achievement.title + "'";
-            rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for "
-                + item.achievement.points + " points.";
+            rss.description = "The guild earned the achievement <strong>" + item.achievement.title + "</strong> for " +
+                item.achievement.points + " points.";
             break;
 
         default:
@@ -98,7 +95,8 @@ var armoryItem = {
 
         case ('ACHIEVEMENT'):
             rss.title = "Earned the achievement '" + item.achievement.title + "'";
-            rss.description = "Earned the achievement " + itemLink.generateAchievementLink(item.achievement) + " for " + item.achievement.points + " points.";
+            rss.description = "Earned the achievement " + itemLink.generateAchievementLink(item.achievement) + " for " +
+                item.achievement.points + " points.";
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
             break;
 
@@ -108,7 +106,8 @@ var armoryItem = {
             } else {
                 rss.title = "Completed step of achievement '" + item.achievement.title + "'";
             }
-            rss.description = "Completed step <strong style='color: #fef092'>" + item.criteria.description + "</strong> of achievement " + itemLink.generateAchievementLink(item.achievement);
+            rss.description = "Completed step <strong style='color: #fef092'>" + item.criteria.description +
+                "</strong> of achievement " + itemLink.generateAchievementLink(item.achievement);
             rss.enclosure = {url: 'http://media.blizzard.com/wow/icons/56/' + item.achievement.icon + '.jpg', type: 'image/jpg'};
             break;
 
@@ -125,7 +124,6 @@ var armoryItem = {
                         resolve(rss);
                     });
                 });
-            break;
 
         case ('BOSSKILL'):
             if (item.name !== '') {
