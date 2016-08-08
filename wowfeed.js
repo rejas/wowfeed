@@ -162,7 +162,7 @@ var app = {
 
                 outstandingCalls -= 1;
                 if (outstandingCalls === 0) {
-                    arr.sort(utils.sortDate);
+                    arr.sort(utils.sortByDate);
                     feed.items = arr;
                     //Print the RSS feed out as response
                     response.write(feed.xml());
@@ -212,7 +212,7 @@ var app = {
                     outstandingCalls -= 1;
 
                     if (outstandingCalls === 0) {
-                        arr.sort(utils.sortDate);
+                        arr.sort(utils.sortByDate);
                         feed.items = arr;
                         //Print the RSS feed out as response
                         response.write(feed.xml());
