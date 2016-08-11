@@ -12,7 +12,7 @@ var wowfeed = {
      * Tell the client the search params were not correct
      * @param response
      */
-    writeErrorPage: function (response) {
+    writeErrorPage: function(response) {
         response.writeHead(200, {'Content-Type': 'text/html'});
         response.write('wowfeed version ' + require('./package.json').version + '<br>');
         response.write('Invalid call, please specify region, realm as well as character or guild.<br>');
@@ -25,11 +25,9 @@ var wowfeed = {
         response.end();
     },
 
-    initialize: function () {
-
+    initialize: function() {
         // Create and start the server to handle requests
-        http.createServer(function (request, response) {
-
+        http.createServer(function(request, response) {
             // Extract the searchquery from the url
             var url_parts = url.parse(request.url, true);
 
@@ -48,18 +46,17 @@ var wowfeed = {
             }
 
             // Actually create the feed
-            app.createFeed(options, response, function (feed) {
+            app.createFeed(options, response, function(feed) {
                     // Tell the client that return value is of rss type
-                    response.writeHead(200, {'Content-Type': 'application/rss+xml'});
-                    response.write(feed.xml());
-                    response.end();
-                }, function (error) {
-                    console.log(error);
-                    response.writeHead(200, {'Content-Type': 'text/html'});
-                    response.write(error.status + ': ' + error.reason);
-                    response.end();
-                });
-
+                response.writeHead(200, {'Content-Type': 'application/rss+xml'});
+                response.write(feed.xml());
+                response.end();
+            }, function(error) {
+                console.log(error);
+                response.writeHead(200, {'Content-Type': 'text/html'});
+                response.write(error.status + ': ' + error.reason);
+                response.end();
+            });
         }).listen(port);
 
         console.log('Server running at port: ' + port);
