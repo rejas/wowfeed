@@ -34,7 +34,7 @@ var wowfeed = {
             var options = {
                 character: url_parts.query.character,
                 guild: url_parts.query.guild,
-                realm: url_parts.query.realm,
+                realm: url_parts.query.realm.replace("'", ''), // Replace ' in realm names like Khaz'goroth
                 region: url_parts.query.region,
                 showSteps: url_parts.query.steps !== 'false',
                 maxItems: url_parts.query.maxItems || 20
