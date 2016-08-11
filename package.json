@@ -11,5 +11,11 @@
   "engines": {
     "node": "6.x",
     "npm": "3.x"
+  },
+  "scripts": {
+    "eslint": "eslint *.js lib/*.js"
+  },
+  "devDependencies": {
+    "eslint": "^3.2.2"
   }
 }
