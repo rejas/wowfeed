@@ -20,7 +20,7 @@ var wowfeed = {
             '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&character=Grimstone" > ' +
             'wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&character=Grimstone</a><br>');
         response.write('or for guilds: ' +
-            '<a href="https://wowfeed.herokuapp.com/?region=eu&guild=Mokrah+Toktok&realm=Khaz%27Goroth" > ' +
+            '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&guild=Mokrah+Toktok" > ' +
             'wowfeed.herokuapp.com/?region=eu&guild=Mokrah+Toktok&realm=Khaz%27Goroth</a><br>');
         response.end();
     },
@@ -47,7 +47,7 @@ var wowfeed = {
 
             // Actually create the feed
             app.createFeed(options, response, function(feed) {
-                    // Tell the client that return value is of rss type
+                // Tell the client that return value is of rss type
                 response.writeHead(200, {'Content-Type': 'application/rss+xml'});
                 response.write(feed.xml());
                 response.end();
