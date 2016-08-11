@@ -1,4 +1,4 @@
-wow-feed
+wowfeed
 ========
 
 wow rss feed generator
