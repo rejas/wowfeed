@@ -54,10 +54,9 @@ var wowfeed = {
             app.createFeed(options, response, function(feed) {
                 // Tell the client that return value is of rss type
                 response.writeHead(200, {'Content-Type': 'application/rss+xml'});
-                response.write(feed.xml());
+                response.write(feed.render('rss-2.0'));
                 response.end();
             }, function(error) {
-                console.log(error);
                 response.writeHead(200, {'Content-Type': 'text/html'});
                 response.write(error.status + ': ' + error.reason);
                 response.end();

@@ -6,7 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "battlenet-api": "^0.13.0",
-    "rss": "^1.2.1"
+    "feed": "^0.3.0"
   },
   "devDependencies": {
     "eslint": "^3.3.0"
