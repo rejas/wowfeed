@@ -16,6 +16,7 @@
     "npm": "3.x"
   },
   "scripts": {
-    "eslint": "eslint *.js lib/*.js"
+    "eslint": "eslint *.js lib/*.js",
+    "fix": "eslint --fix *.js lib/*.js"
   }
 }
