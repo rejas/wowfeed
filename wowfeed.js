@@ -29,15 +29,15 @@ var wowfeed = {
         // Create and start the server to handle requests
         http.createServer(function(request, response) {
             // Extract the searchquery from the url
-            var url_parts = url.parse(request.url, true);
+            var urlParts = url.parse(request.url, true);
 
             var options = {
-                character: url_parts.query.character,
-                guild: url_parts.query.guild,
-                realm: url_parts.query.realm.replace("'", ''), // Replace ' in realm names like Khaz'goroth
-                region: url_parts.query.region,
-                showSteps: url_parts.query.steps !== 'false',
-                maxItems: url_parts.query.maxItems || 20
+                character: urlParts.query.character,
+                guild: urlParts.query.guild,
+                realm: urlParts.query.realm.replace("'", ''), // Replace ' in realm names like Khaz'goroth
+                region: urlParts.query.region,
+                showSteps: urlParts.query.steps !== 'false',
+                maxItems: urlParts.query.maxItems || 20
             };
 
             if (!options.region || !options.realm || !(options.character || options.guild)) {

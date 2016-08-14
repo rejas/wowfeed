@@ -72,7 +72,7 @@
     "no-empty": 2,
     "no-ex-assign": 2,
     "no-extra-boolean-cast": 2,
-    "no-extra-parens": [1, "all"], // `[2, "all"]` is default
+    "no-extra-parens": [1, "functions"], // `[2, "all"]` is default
     "no-extra-semi": 1, // `2` is default
     "no-func-assign": 2,
     "no-inner-declarations": [2, "both"], // `[2, "functions"]` is default
@@ -108,7 +108,6 @@
     "no-caller": 2,
     "no-div-regex": 2,
     "no-else-return": 2,
-    "no-empty-label": 2,
     "no-eq-null": 2,
     "no-eval": 2,
     "no-extend-native": 2, // `2` is recommended, optionally set `[2, {"exceptions": ["Object"]}]`
@@ -171,6 +170,7 @@
     "indent": [1, 4, {"SwitchCase": 1, "VariableDeclarator": 1}], // optionally set `[2, 2, {"SwitchCase": 1, "VariableDeclarator": {"var": 2, "let": 2, "const": 3}}]`
     "jsx-quotes": [1, "prefer-double"],
     "key-spacing": [1, {"beforeColon": false, "afterColon": true, "mode": "minimum"}], // optionally set `[2, {"beforeColon": false, "afterColon": true, "mode": "strict", "align": "colon"}]`
+    "keyword-spacing":[1, {"before": true, "after": true}],
     "lines-around-comment": 0, // optionally set `[2, {"beforeBlockComment": true, "beforeLineComment": true, "allowBlockStart": true}]`
     "linebreak-style": 0, // optionally set `[1, "unix"]`
     "max-nested-callbacks": [1, 3],
@@ -202,13 +202,10 @@
     "semi-spacing": [1, {"before": false, "after": true}],
     "semi": [1, "always"],
     "sort-vars": 0, // optaionlly set `[2, {"ignoreCase": true}]`
-    "space-after-keywords": [1, "always"],
-    "space-before-keywords": [1, "always"],
     "space-before-blocks": [1, "always"], // optionally set `[2, {"functions": "never", "keywords": "always"}]`
     "space-before-function-paren": [1, "never"], // optionally set `[2, {"anonymous": "always", "named": "never"}]`
     "space-in-parens": [1, "never"], // optionally set `[2, "always", {"exceptions": ["empty"]}]`
     "space-infix-ops": [1, {"int32Hint": false}],
-    "space-return-throw-case": 1,
     "space-unary-ops": [1, {"words": true, "nonwords": false}],
     "spaced-comment": [1, "always", {"exceptions": ["/"]}], // optionally set `[2, "always", {"exceptions": ["-", "+"], "markers": ["/"]}]`
     "wrap-regex": 1,
