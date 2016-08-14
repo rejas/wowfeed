@@ -34,7 +34,7 @@ var wowfeed = {
             var options = {
                 character: urlParts.query.character,
                 guild: urlParts.query.guild,
-                realm: urlParts.query.realm.replace("'", ''), // Replace ' in realm names like Khaz'goroth
+                realm: urlParts.query.realm,
                 region: urlParts.query.region,
                 showSteps: urlParts.query.steps !== 'false',
                 maxItems: urlParts.query.maxItems || 20
@@ -43,6 +43,11 @@ var wowfeed = {
             if (!options.region || !options.realm || !(options.character || options.guild)) {
                 wowfeed.writeErrorPage(response);
                 return;
+            }
+
+            // Replace ' in realm names like Khaz'goroth
+            if (options.realm) {
+                options.realm = options.realm.replace("'", '');
             }
 
             // Actually create the feed
