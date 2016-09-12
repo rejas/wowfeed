@@ -157,7 +157,7 @@
     "array-bracket-spacing": [1, "never"], // optionally set `[2, "never", {"singleValue": true, "objectsInArrays": true, "arraysInArrays": true}]`
     "block-spacing": [1, "always"],
     "brace-style": [1, "1tbs", {"allowSingleLine": false}],
-    "camelcase": [1, {"properties": "always"}],
+    "camelcase": [0],
     "comma-spacing": [1, {"before": false, "after": true}],
     "comma-style": [1, "last"], // optionally set `[2, "first", {"exceptions": {"ArrayExpression": true, "ObjectExpression": true}}]`
     "computed-property-spacing": [1, "never"],
