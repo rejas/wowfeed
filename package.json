@@ -5,7 +5,7 @@
   "version": "0.8.3",
   "license": "MIT",
   "dependencies": {
-    "battlenet-api": "^0.13.0",
+    "blizzard.js": "^1.1.0",
     "rss": "^1.2.1"
   },
   "devDependencies": {
