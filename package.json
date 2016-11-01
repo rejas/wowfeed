@@ -5,7 +5,7 @@
   "version": "0.8.3",
   "license": "MIT",
   "dependencies": {
-    "blizzard.js": "^1.4.0",
+    "blizzard.js": "^1.5.0",
     "rss": "^1.2.1"
   },
   "devDependencies": {
