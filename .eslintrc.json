@@ -192,7 +192,7 @@
     "no-underscore-dangle": 0,
     "no-unneeded-ternary": [1, {"defaultAssignment": true}],
     "object-curly-spacing": [1, "never"], // optionally set `[2, "always", {"objectsInObjects": false, "arraysInObjects": false}]`
-    "one-var": [1, {"uninitialized": "always", "initialized": "never"}], // optionally set `[2, {"var": "always", "let": "never", "const": "never"}]`
+    "one-var": [2, {"var": "always", "let": "always", "const": "always"}], // optionally set `[1, {"uninitialized": "always", "initialized": "never"}]`
     "operator-assignment": 0, // optionally set `[2, "always"]`
     "operator-linebreak": [1, "after"], // optionally set `[2, "before", {"overrides": {"?": "after"}}]`
     "padded-blocks": [1, "never"],
