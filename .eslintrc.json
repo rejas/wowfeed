@@ -29,7 +29,7 @@
 {
   "env": {
     "node": true,
-    "es6":true
+    "es6": true
   },
   "rules": {
     /*
@@ -257,6 +257,6 @@
     "max-params": 0, // no default, optionally set `[2, 3]`
     "max-statements": 0, // no default, optionally set `[2, 2]`
     "no-bitwise": 1, // `2` is default
-    "no-plusplus": 0, // `2` is default
+    "no-plusplus": 0 // `2` is default
   }
 }
