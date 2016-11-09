@@ -57,9 +57,8 @@ var wowfeed = {
                 response.write(feed.xml());
                 response.end();
             }, function(error) {
-                console.log(error);
                 response.writeHead(200, {'Content-Type': 'text/html'});
-                response.write(error.status + ': ' + error.reason);
+                response.write(error.code + ': ' + error.syscall);
                 response.end();
             });
         }).listen(port);
