@@ -1,10 +1,9 @@
 'use strict';
 
-var http        = require('http'),
-    url         = require('url'),
-    app         = require('./lib/app.js');
-
-const port      = process.env.PORT || 3000,
+const http  = require('http'),
+    url     = require('url'),
+    app     = require('./lib/app.js'),
+    port    = process.env.PORT || 3000,
     wowfeed = {
 
     /**
