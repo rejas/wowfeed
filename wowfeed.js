@@ -1,12 +1,11 @@
 'use strict';
 
-const port      = process.env.PORT || 3000;
-
 var http        = require('http'),
     url         = require('url'),
     app         = require('./lib/app.js');
 
-var wowfeed = {
+const port      = process.env.PORT || 3000,
+    wowfeed = {
 
     /**
      * Tell the client the search params were not correct
@@ -29,16 +28,15 @@ var wowfeed = {
         // Create and start the server to handle requests
         http.createServer(function(request, response) {
             // Extract the searchquery from the url
-            var urlParts = url.parse(request.url, true);
-
-            var options = {
-                character: urlParts.query.character,
-                guild: urlParts.query.guild,
-                realm: urlParts.query.realm,
-                region: urlParts.query.region,
-                showSteps: urlParts.query.steps !== 'false',
-                maxItems: urlParts.query.maxItems || 20
-            };
+            var urlParts = url.parse(request.url, true),
+                options = {
+                    character: urlParts.query.character,
+                    guild: urlParts.query.guild,
+                    realm: urlParts.query.realm,
+                    region: urlParts.query.region,
+                    showSteps: urlParts.query.steps !== 'false',
+                    maxItems: urlParts.query.maxItems || 20
+                };
 
             if (!options.region || !options.realm || !(options.character || options.guild)) {
                 wowfeed.writeErrorPage(response);
