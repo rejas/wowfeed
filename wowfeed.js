@@ -1,6 +1,7 @@
 'use strict';
 
-const http  = require('http'),
+const fs    = require('fs'),
+    http    = require('http'),
     url     = require('url'),
     app     = require('./lib/app.js'),
     port    = process.env.PORT || 3000,
@@ -11,16 +12,11 @@ const http  = require('http'),
          * @param response
          */
         writeErrorPage: function(response) {
-            response.writeHead(200, {'Content-Type': 'text/html'});
-            response.write('wowfeed version ' + require('./package.json').version + '<br>');
-            response.write('Invalid call, please specify region, realm as well as character or guild.<br>');
-            response.write('Something like this for characters: ' +
-                '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&character=Grimstone" > ' +
-                'wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&character=Grimstone</a><br>');
-            response.write('or for guilds: ' +
-                '<a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khaz%27Goroth&guild=Mokrah+Toktok" > ' +
-                'wowfeed.herokuapp.com/?region=eu&guild=Mokrah+Toktok&realm=Khaz%27Goroth</a><br>');
-            response.end();
+            fs.readFile("./html/index.html", "binary", function(err, file) {
+                response.writeHead(200);
+                response.write(file, "binary");
+                response.end();
+            });
         },
 
         initialize: function() {
