@@ -9,7 +9,7 @@
     "rss": "^1.2.1"
   },
   "devDependencies": {
-    "eslint": "^3.10.2"
+    "eslint": "^3.13.0"
   },
   "engines": {
     "node": "6.x",

@@ -12,9 +12,9 @@ const fs    = require('fs'),
          * @param response
          */
         writeErrorPage: function(response) {
-            fs.readFile("./html/index.html", "binary", function(err, file) {
+            fs.readFile('./html/index.html', 'binary', function(err, file) {
                 response.writeHead(200);
-                response.write(file, "binary");
+                response.write(file, 'binary');
                 response.end();
             });
         },
