@@ -6,10 +6,10 @@
   "license": "MIT",
   "dependencies": {
     "blizzard.js": "^1.6.0",
-    "rss": "^1.2.1"
+    "rss": "^1.2.2"
   },
   "devDependencies": {
-    "eslint": "^3.13.0"
+    "eslint": "^3.14.0"
   },
   "engines": {
     "node": "6.x",
