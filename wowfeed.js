@@ -13,6 +13,9 @@ const fs    = require('fs'),
          */
         writeErrorPage: function(response) {
             fs.readFile('./html/index.html', 'binary', function(err, file) {
+                if (err) {
+                    console.log(err);
+                }
                 response.writeHead(200);
                 response.write(file, 'binary');
                 response.end();
@@ -40,7 +43,7 @@ const fs    = require('fs'),
 
                 // Replace ' in realm names like Khaz'goroth
                 if (options.realm) {
-                    options.realm = options.realm.replace("'", '');
+                    options.realm = options.realm.replace('\'', '');
                 }
 
                 // Actually create the feed
