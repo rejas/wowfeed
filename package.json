@@ -5,18 +5,18 @@
   "version": "0.8.4",
   "license": "MIT",
   "dependencies": {
-    "blizzard.js": "^1.6.0",
+    "blizzard.js": "^1.7.0",
     "rss": "^1.2.2"
   },
   "devDependencies": {
-    "eslint": "^3.15.0"
+    "eslint": "^3.19.0"
   },
   "engines": {
     "node": "6.x",
     "npm": "3.x"
   },
   "scripts": {
-    "check": "eslint *.js lib/*.js",
+    "chk": "eslint *.js lib/*.js",
     "fix": "eslint --fix *.js lib/*.js"
   }
 }
