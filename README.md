@@ -1,6 +1,8 @@
 wowfeed
 ========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/rejas/wowfeed.svg)](https://greenkeeper.io/)
+
 wow rss feed generator
 
 example:
