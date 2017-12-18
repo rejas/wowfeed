@@ -12,12 +12,11 @@
     "eslint": "^4.13.1"
   },
   "engines": {
-    "node": "8.x",
-    "npm": "3.x"
+    "node": "8.x || 9.x"
   },
   "scripts": {
-    "chk": "eslint *.js lib/*.js",
-    "fix": "eslint --fix *.js lib/*.js",
+    "check": "eslint *.js lib/*.js",
+    "fix":   "eslint --fix *.js lib/*.js",
     "start": "node wowfeed.js"
   }
 }
