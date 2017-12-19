@@ -11,7 +11,7 @@ const fs    = require('fs'),
          * Tell the client the search params were not correct
          * @param response
          */
-        writeErrorPage: function(response) {
+        writeErrorPage: (response) => {
             fs.readFile('./html/index.html', 'binary', function(err, file) {
                 if (err) {
                     console.log(err);
@@ -22,11 +22,11 @@ const fs    = require('fs'),
             });
         },
 
-        initialize: function() {
+        initialize: () => {
             // Create and start the server to handle requests
-            http.createServer(function(request, response) {
+            http.createServer((request, response) => {
                 // Extract the searchquery from the url
-                var urlParts = url.parse(request.url, true),
+                let urlParts = url.parse(request.url, true),
                     options = {
                         character: urlParts.query.character,
                         guild: urlParts.query.guild,
@@ -36,6 +36,7 @@ const fs    = require('fs'),
                         maxItems: urlParts.query.maxItems || 20
                     };
 
+                // Check if all mandatory options are there
                 if (!options.region || !options.realm || !(options.character || options.guild)) {
                     wowfeed.writeErrorPage(response);
                     return;
@@ -47,12 +48,12 @@ const fs    = require('fs'),
                 }
 
                 // Actually create the feed
-                app.createFeed(options, function(feed) {
+                app.createFeed(options, (feed) => {
                     // Tell the client that return value is of rss type
                     response.writeHead(200, {'Content-Type': 'application/rss+xml'});
                     response.write(feed.xml());
                     response.end();
-                }, function(error) {
+                }, (error) => {
                     response.writeHead(200, {'Content-Type': 'text/html'});
                     response.write(error.code + ': ' + error.syscall);
                     response.end();
