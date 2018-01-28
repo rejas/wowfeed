@@ -12,7 +12,7 @@ const fs    = require('fs'),
          * @param response
          */
         writeErrorPage: (response) => {
-            fs.readFile('./docs/index.html', 'binary', function(err, file) {
+            fs.readFile('./docs/index.html', 'binary', (err, file) => {
                 if (err) {
                     console.log(err);
                 }
