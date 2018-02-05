@@ -5,11 +5,11 @@
   "version": "0.9.1",
   "license": "MIT",
   "dependencies": {
-    "blizzard.js": "^2.1.0",
+    "blizzard.js": "^2.2.0",
     "rss": "^1.2.2"
   },
   "devDependencies": {
-    "eslint": "^4.16.0"
+    "eslint": "^4.17.0"
   },
   "engines": {
     "node": "8.x || 9.x"
