@@ -18,6 +18,6 @@
     "check": "eslint *.js lib/*.js",
     "fix":   "eslint --fix *.js lib/*.js",
     "start": "node wowfeed.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Warning: no test specified\" && exit 0"
   }
 }
