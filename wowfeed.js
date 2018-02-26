@@ -25,6 +25,7 @@ const fs    = require('fs'),
         initialize: () => {
             // Create and start the server to handle requests
             http.createServer((request, response) => {
+
                 // Extract the searchquery from the url
                 let urlParts = url.parse(request.url, true),
                     options = {
