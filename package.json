@@ -17,6 +17,7 @@
   "scripts": {
     "check": "eslint *.js lib/*.js",
     "fix":   "eslint --fix *.js lib/*.js",
-    "start": "node wowfeed.js"
+    "start": "node wowfeed.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
