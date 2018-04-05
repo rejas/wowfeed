@@ -6,7 +6,8 @@
   "license": "MIT",
   "dependencies": {
     "blizzard.js": "^2.3.0",
-    "rss": "^1.2.2"
+    "rss": "^1.2.2",
+    "universal-analytics": "^0.4.16"
   },
   "devDependencies": {
     "eslint": "^4.19.1"
