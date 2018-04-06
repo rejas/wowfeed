@@ -6,7 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "blizzard.js": "^2.3.0",
-    "feed": "^0.3.0",
+    "feed": "^1.1.1",
     "universal-analytics": "^0.4.16"
   },
   "devDependencies": {
