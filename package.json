@@ -2,20 +2,23 @@
   "name": "wowfeed",
   "description": "rss feed generator for the world of warcraft armory",
   "repository": "https://github.com/rejas/wowfeed.git",
-  "version": "0.8.3",
+  "version": "0.9.5",
   "license": "MIT",
   "dependencies": {
-    "battlenet-api": "^0.13.0",
-    "feed": "^0.3.0"
+    "blizzard.js": "^2.3.0",
+    "feed": "^0.3.0",
+    "universal-analytics": "^0.4.16"
   },
   "devDependencies": {
-    "eslint": "^3.3.0"
+    "eslint": "^4.19.1"
   },
   "engines": {
-    "node": "6.x",
-    "npm": "3.x"
+    "node": "8.x || 9.x"
   },
   "scripts": {
-    "eslint": "eslint *.js lib/*.js"
+    "check": "eslint *.js lib/*.js",
+    "fix": "eslint --fix *.js lib/*.js",
+    "start": "node wowfeed.js",
+    "test": "echo \"Warning: no test specified\" && exit 0"
   }
 }
