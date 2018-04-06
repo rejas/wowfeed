@@ -50,10 +50,11 @@ const fs    = require('fs'),
                     options.realm = options.realm.replace('\'', '');
                 }
 
+                // Send analytics events
                 if (options.character) {
-                    visitor.event('Character', options.character, options.realm).send();
+                    visitor.pageview(`character/${options.region}/${options.realm}/${options.character}`).send();
                 } else if (options.guild) {
-                    visitor.event('Guild', options.guild, options.realm).send();
+                    visitor.pageview(`character/${options.region}/${options.realm}/${options.guild}`).send();
                 }
 
                 // Actually create the feed
