@@ -4,6 +4,7 @@ const fs    = require('fs'),
     http    = require('http'),
     url     = require('url'),
     app     = require('./lib/app.js'),
+    ua      = require('universal-analytics'),
     port    = process.env.PORT || 3000,
     wowfeed = {
 
@@ -25,6 +26,7 @@ const fs    = require('fs'),
         initialize: () => {
             // Create and start the server to handle requests
             http.createServer((request, response) => {
+                let visitor = ua('UA-431999-5', {https: true});
 
                 // Extract the searchquery from the url
                 let urlParts = url.parse(request.url, true),
@@ -46,6 +48,13 @@ const fs    = require('fs'),
                 // Replace ' in realm names like Khaz'goroth
                 if (options.realm) {
                     options.realm = options.realm.replace('\'', '');
+                }
+
+                // Send analytics events
+                if (options.character) {
+                    visitor.pageview(`character/${options.region}/${options.realm}/${options.character}`).send();
+                } else if (options.guild) {
+                    visitor.pageview(`character/${options.region}/${options.realm}/${options.guild}`).send();
                 }
 
                 // Actually create the feed
