@@ -2,7 +2,7 @@
   "name": "wowfeed",
   "description": "rss feed generator for the world of warcraft armory",
   "repository": "https://github.com/rejas/wowfeed.git",
-  "version": "0.9.2",
+  "version": "0.9.5",
   "license": "MIT",
   "dependencies": {
     "blizzard.js": "^2.3.0",
