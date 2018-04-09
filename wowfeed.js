@@ -26,7 +26,7 @@ const fs    = require('fs'),
         initialize: () => {
             // Create and start the server to handle requests
             http.createServer((request, response) => {
-                let visitor = ua('UA-431999-5', {https: true});
+                let analytics = ua('UA-431999-5', {https: true});
 
                 // Extract the searchquery from the url
                 let urlParts = url.parse(request.url, true),
@@ -41,7 +41,7 @@ const fs    = require('fs'),
 
                 // Check if all mandatory options are there
                 if (!options.region || !options.realm || !(options.character || options.guild)) {
-                    visitor.pageview(`index`).send();
+                    analytics.pageview('index').send();
                     wowfeed.writeErrorPage(response);
                     return;
                 }
@@ -53,9 +53,9 @@ const fs    = require('fs'),
 
                 // Send analytics events
                 if (options.character) {
-                    visitor.pageview(`character/${options.region}/${options.realm}/${options.character}`).send();
+                    analytics.pageview(`character/${options.region}/${options.realm}/${options.character}`).send();
                 } else if (options.guild) {
-                    visitor.pageview(`character/${options.region}/${options.realm}/${options.guild}`).send();
+                    analytics.pageview(`character/${options.region}/${options.realm}/${options.guild}`).send();
                 }
 
                 // Actually create the feed
