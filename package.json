@@ -1,10 +1,14 @@
 {
   "name": "wowfeed",
-  "description": "rss feed generator for the world of warcraft armory",
-  "repository": "https://github.com/rejas/wowfeed.git",
-  "author": "rejas",
   "version": "0.9.6",
+  "description": "rss feed generator for the world of warcraft armory",
+  "homepage": "https://wowfeed.herokuapp.com/",
   "license": "MIT",
+  "repository": "https://github.com/rejas/wowfeed.git",
+  "author": {
+    "name": "rejas",
+    "url": "https://github.com/rejas"
+  },
   "dependencies": {
     "blizzard.js": "^2.3.0",
     "rss": "^1.2.2",
