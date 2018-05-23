@@ -1,46 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>WoW RSS Feed Generator</title>
-  <meta charset='utf-8'>
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="Michael Veeck">
-  <meta name="description" content="Create a rss feed for a World Of Warcraft character or guild.">
-  <meta name="google-site-verification" content="zTRzQcXZgsBJz5Dj0EuGVzYfRLo8Vv5eJoXUPwnFVHg" />
-  <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-  <style>
-    header h1,header h2{letter-spacing:-1px}.clearfix,a.button,a.button span,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{padding:0;margin:0;font:inherit;font-size:100%;vertical-align:baseline;border:0}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}body{font-family:'Helvetica Neue',Helvetica,Arial,serif;font-size:1em;line-height:1.5;color:#6d6d6d;text-shadow:0 1px 0 rgba(255,255,255,.8);background:url(../images/body-bg.png) #e7e7e7}a{color:#d5000d;text-decoration:none}a:hover{color:#c5000c}header{padding-top:35px;padding-bottom:25px}header h1{font-family:Chivo,'Helvetica Neue',Helvetica,Arial,serif;font-size:48px;font-weight:900;line-height:1.2;color:#303030}header h2{font-size:24px;font-weight:400;line-height:1.3;color:#aaa}a.button,strong{font-weight:700}#container{min-height:595px;background:url(../images/highlight-bg.jpg) 50% 0 no-repeat}.inner{width:620px;margin:0 auto}h2,h3{margin-bottom:8px}blockquote,dl,ol,p,ul{margin-bottom:20px}#container .inner img{max-width:100%}#downloads{margin-bottom:40px}a.button{float:left;width:179px;padding:12px 8px;margin-right:14px;font-size:15px;line-height:25px;color:#303030;background:#fdfdfd;background:-moz-linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);background:-webkit-gradient(linear,left top,left bottom,color-stop(0,#fdfdfd),color-stop(100%,#f2f2f2));background:-webkit-linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);background:-o-linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);background:-ms-linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);background:linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#fdfdfd', endColorstr='#f2f2f2', GradientType=0 );border-top:solid 1px #cbcbcb;border-right:solid 1px #b7b7b7;border-bottom:solid 1px #b3b3b3;border-left:solid 1px #b7b7b7;border-radius:30px;-webkit-box-shadow:10px 10px 5px #888;-moz-box-shadow:10px 10px 5px #888;box-shadow:0 1px 5px #e8e8e8;-moz-border-radius:30px;-webkit-border-radius:30px}a.button:hover{background:#fafafa;background:-moz-linear-gradient(top,#fdfdfd 0,#f6f6f6 100%);background:-webkit-gradient(linear,left top,left bottom,color-stop(0,#fdfdfd),color-stop(100%,#f6f6f6));background:-webkit-linear-gradient(top,#fdfdfd 0,#f6f6f6 100%);background:-o-linear-gradient(top,#fdfdfd 0,#f6f6f6 100%);background:-ms-linear-gradient(top,#fdfdfd 0,#f6f6f6 100%);background:linear-gradient(top,#fdfdfd 0,#f6f6f6,100%);filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#fdfdfd', endColorstr='#f6f6f6', GradientType=0 );border-top:solid 1px #b7b7b7;border-right:solid 1px #b3b3b3;border-bottom:solid 1px #b3b3b3;border-left:solid 1px #b3b3b3}hr,pre code{border:none}table,td{border:1px solid #ebebeb}a.button span{height:23px;padding-left:50px}#download-zip span{background:url(../images/zip-icon.png) 12px 50% no-repeat}#download-tar-gz span{background:url(../images/tar-gz-icon.png) 12px 50% no-repeat}#view-on-github span{background:url(../images/octocat-icon.png) 12px 50% no-repeat}#view-on-github{margin-right:0}code,pre{margin-bottom:30px;font-family:Monaco,"Bitstream Vera Sans Mono","Lucida Console",Terminal;font-size:14px;color:#222}dl dt,h2,h4,h5,h6,pre,pre code{color:#303030}code{padding:0 3px;border:1px solid #ddd}pre{padding:0 20px;overflow:auto;text-shadow:none}pre code{padding:0}hr{height:1px;padding-bottom:1em;margin-top:1em;line-height:1px;background:url(../images/hr.png) 50% 0 no-repeat}em{font-style:italic}table{border-spacing:0;border-collapse:collapse;width:100%}th{font-weight:500}td{font-weight:300;text-align:center}h2,h3,h4{font-weight:700}form{padding:20px;background:#f2f2f2}h1{font-size:32px}h2{font-size:22px}h3{font-size:18px;color:#d5000d}h4{font-size:16px}h5{font-size:1em}h6{font-size:.8em}p{font-weight:300}p a{font-weight:400}blockquote{padding:0 0 0 30px;font-size:1.6em;border-left:10px solid #e9e9e9}ul li{list-style:disc;padding-left:20px}ol li{list-style:decimal;padding-left:3px}footer{padding-top:20px;padding-bottom:30px;margin-top:40px;font-size:13px;color:#aaa;background:url(../images/hr.png) no-repeat}footer a{color:#666}footer a:hover{color:#444}.clearfix:after{display:block;height:0;clear:both;visibility:hidden;content:'.'}* html .clearfix{height:1%}@media only screen and (max-width:767px){header{padding-top:10px;padding-bottom:10px}#downloads{margin-bottom:25px}#download-tar-gz,#download-zip{display:none}.inner{width:94%;margin:0 auto}}
-  </style>
+    <title>WoW RSS Feed Generator</title>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Michael Veeck">
+    <meta name="description" content="Create a rss feed for a World Of Warcraft character or guild.">
+    <meta name="google-site-verification" content="zTRzQcXZgsBJz5Dj0EuGVzYfRLo8Vv5eJoXUPwnFVHg" />
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <style>
+        header h1,header h2{letter-spacing:-1px}.clearfix,a.button,a.button span,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{padding:0;margin:0;font:inherit;font-size:100%;vertical-align:baseline;border:0}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}body{font-family:'Helvetica Neue',Helvetica,Arial,serif;font-size:1em;line-height:1.5;color:#6d6d6d;text-shadow:0 1px 0 rgba(255,255,255,.8);background:url(../images/body-bg.png) #e7e7e7}a{color:#d5000d;text-decoration:none}a:hover{color:#c5000c}header{padding-top:35px;padding-bottom:25px}header h1{font-family:Chivo,'Helvetica Neue',Helvetica,Arial,serif;font-size:48px;font-weight:900;line-height:1.2;color:#303030}header h2{font-size:24px;font-weight:400;line-height:1.3;color:#aaa}a.button,strong{font-weight:700}#container{min-height:595px;background:url(../images/highlight-bg.jpg) 50% 0 no-repeat}.inner{width:620px;margin:0 auto}h2,h3{margin-bottom:8px}blockquote,dl,ol,p,ul{margin-bottom:20px}#container .inner img{max-width:100%}#downloads{margin-bottom:40px}a.button{float:left;width:179px;padding:12px 8px;margin-right:14px;font-size:15px;line-height:25px;color:#303030;background:#fdfdfd;background:-moz-linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);background:-webkit-gradient(linear,left top,left bottom,color-stop(0,#fdfdfd),color-stop(100%,#f2f2f2));background:-webkit-linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);background:-o-linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);background:-ms-linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);background:linear-gradient(top,#fdfdfd 0,#f2f2f2 100%);filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#fdfdfd', endColorstr='#f2f2f2', GradientType=0 );border-top:solid 1px #cbcbcb;border-right:solid 1px #b7b7b7;border-bottom:solid 1px #b3b3b3;border-left:solid 1px #b7b7b7;border-radius:30px;-webkit-box-shadow:10px 10px 5px #888;-moz-box-shadow:10px 10px 5px #888;box-shadow:0 1px 5px #e8e8e8;-moz-border-radius:30px;-webkit-border-radius:30px}a.button:hover{background:#fafafa;background:-moz-linear-gradient(top,#fdfdfd 0,#f6f6f6 100%);background:-webkit-gradient(linear,left top,left bottom,color-stop(0,#fdfdfd),color-stop(100%,#f6f6f6));background:-webkit-linear-gradient(top,#fdfdfd 0,#f6f6f6 100%);background:-o-linear-gradient(top,#fdfdfd 0,#f6f6f6 100%);background:-ms-linear-gradient(top,#fdfdfd 0,#f6f6f6 100%);background:linear-gradient(top,#fdfdfd 0,#f6f6f6,100%);filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#fdfdfd', endColorstr='#f6f6f6', GradientType=0 );border-top:solid 1px #b7b7b7;border-right:solid 1px #b3b3b3;border-bottom:solid 1px #b3b3b3;border-left:solid 1px #b3b3b3}hr,pre code{border:none}table,td{border:1px solid #ebebeb}a.button span{height:23px;padding-left:50px}#download-zip span{background:url(../images/zip-icon.png) 12px 50% no-repeat}#download-tar-gz span{background:url(../images/tar-gz-icon.png) 12px 50% no-repeat}#view-on-github span{background:url(../images/octocat-icon.png) 12px 50% no-repeat}#view-on-github{margin-right:0}code,pre{margin-bottom:30px;font-family:Monaco,"Bitstream Vera Sans Mono","Lucida Console",Terminal;font-size:14px;color:#222}dl dt,h2,h4,h5,h6,pre,pre code{color:#303030}code{padding:0 3px;border:1px solid #ddd}pre{padding:0 20px;overflow:auto;text-shadow:none}pre code{padding:0}hr{height:1px;padding-bottom:1em;margin-top:1em;line-height:1px;background:url(../images/hr.png) 50% 0 no-repeat}em{font-style:italic}table{border-spacing:0;border-collapse:collapse;width:100%}th{font-weight:500}td{font-weight:300;text-align:center}h2,h3,h4{font-weight:700}form{padding:20px;background:#f2f2f2}h1{font-size:32px}h2{font-size:22px}h3{font-size:18px;color:#d5000d}h4{font-size:16px}h5{font-size:1em}h6{font-size:.8em}p{font-weight:300}p a{font-weight:400}blockquote{padding:0 0 0 30px;font-size:1.6em;border-left:10px solid #e9e9e9}ul li{list-style:disc;padding-left:20px}ol li{list-style:decimal;padding-left:3px}footer{padding-top:20px;padding-bottom:30px;margin-top:40px;font-size:13px;color:#aaa;background:url(../images/hr.png) no-repeat}footer a{color:#666}footer a:hover{color:#444}.clearfix:after{display:block;height:0;clear:both;visibility:hidden;content:'.'}* html .clearfix{height:1%}@media only screen and (max-width:767px){header{padding-top:10px;padding-bottom:10px}#downloads{margin-bottom:25px}#download-tar-gz,#download-zip{display:none}.inner{width:94%;margin:0 auto}}
+    </style>
 </head>
 <body>
-  <div id="container">
-    <div class="inner">
-      <header>
-        <h1>WoW RSS Feed Generator</h1>
-        <h2>Create an rss feed for a World Of Warcraft character or guild.</h2>
-      </header>
-      <div id="main_content">
-        <p>Please specify region, realm as well as character or guild.</p>
-        <section>
-          <h2>To create a Character Feed:</h2>
-          <a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khazgoroth&character=Grimstone">
-            https://wowfeed.herokuapp.com/?region=eu&realm=Khazgoroth&character=Grimstone
-          </a>
-        </section>
-        <hr/>
-        <section>
-          <h2>To create a Guild Feed:</h2>
-          <a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khazgoroth&guild=Mokrah+Toktok">
-            https://wowfeed.herokuapp.com/?region=eu&realm=Khazgoroth&guild=Mokrah+Toktok
-          </a>
-        </section>
-      </div>
-      <footer>
-        <p>Copyright © 2018 <a href="https://github.com/rejas">rejas</a>. Sourcecode
-          can be found on <a href="https://github.com/rejas/wowfeed">github.</a></p>
-      </footer>
+    <div id="container">
+        <div class="inner">
+            <header>
+                <h1>WoW RSS Feed Generator</h1>
+                <h2>Create an rss feed for a World Of Warcraft character or guild.</h2>
+            </header>
+            <div id="main_content">
+                <p>Please specify region, realm as well as character or guild.</p>
+                <section>
+                    <h2>To create a Character Feed:</h2>
+                    <a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khazgoroth&character=Grimstone">
+                        https://wowfeed.herokuapp.com/?region=eu&realm=Khazgoroth&character=Grimstone
+                    </a>
+                </section>
+                <hr/>
+                <section>
+                    <h2>To create a Guild Feed:</h2>
+                    <a href="https://wowfeed.herokuapp.com/?region=eu&realm=Khazgoroth&guild=Mokrah+Toktok">
+                        https://wowfeed.herokuapp.com/?region=eu&realm=Khazgoroth&guild=Mokrah+Toktok
+                    </a>
+                </section>
+            </div>
+            <footer>
+                <p>Copyright © 2018 <a href="https://github.com/rejas">rejas</a>. Sourcecode
+                    can be found on <a href="https://github.com/rejas/wowfeed">github.</a></p>
+            </footer>
+        </div>
     </div>
-  </div>
 </body>
 </html>
