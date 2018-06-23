@@ -15,7 +15,7 @@
     "universal-analytics": "^0.4.17"
   },
   "devDependencies": {
-    "eslint": "^4.19.1"
+    "eslint": "^5.0.0"
   },
   "engines": {
     "node": ">=6"
