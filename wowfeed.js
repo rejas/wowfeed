@@ -55,7 +55,7 @@ const fs    = require('fs'),
                 if (options.character) {
                     analytics.pageview(`character/${options.region}/${options.realm}/${options.character}`).send();
                 } else if (options.guild) {
-                    analytics.pageview(`character/${options.region}/${options.realm}/${options.guild}`).send();
+                    analytics.pageview(`guild/${options.region}/${options.realm}/${options.guild}`).send();
                 }
 
                 // Actually create the feed
