@@ -22,9 +22,9 @@
     "node": ">=6"
   },
   "scripts": {
-    "check": "eslint *.js lib/*.js",
-    "fix": "eslint --fix *.js lib/*.js",
+    "eslint": "eslint *.js lib/*.js",
+    "eslint:fix": "eslint --fix *.js lib/*.js",
     "start": "nodemon wowfeed.js",
-    "test": "echo \"Warning: no test specified\" && exit 0"
+    "test": "npm run eslint"
   }
 }
