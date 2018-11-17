@@ -17,10 +17,10 @@ available options:
 example:
 -------
 
-character rss feed
+- **character rss feed**
 
 https://wowfeed.herokuapp.com/?region=eu&realm=khazgoroth&character=grimstone
 
-guild rss feed
+- **guild rss feed**
 
 https://wowfeed.herokuapp.com/?region=eu&realm=khazgoroth&guild=mokrah+toktok
