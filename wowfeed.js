@@ -63,7 +63,7 @@ const fs    = require('fs'),
                     .then(feed => {
                         // Tell the client that return value is of rss type
                         response.writeHead(200, {'Content-Type': 'application/rss+xml'});
-                        response.write(feed.render('rss-2.0'));
+                        response.write(feed.rss2());
                         response.end();
                     }).catch(error => {
                         let errorData = error.response.data;
