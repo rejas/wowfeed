@@ -59,16 +59,18 @@ const fs    = require('fs'),
                 }
 
                 // Actually create the feed
-                app.createFeed(options, (feed) => {
-                    // Tell the client that return value is of rss type
-                    response.writeHead(200, {'Content-Type': 'application/rss+xml'});
-                    response.write(feed.xml());
-                    response.end();
-                }, (error) => {
-                    response.writeHead(200, {'Content-Type': 'text/html'});
-                    response.write(error.code + ': ' + error.syscall);
-                    response.end();
-                });
+                app.createFeed(options)
+                    .then(feed => {
+                        // Tell the client that return value is of rss type
+                        response.writeHead(200, {'Content-Type': 'application/rss+xml'});
+                        response.write(feed.xml());
+                        response.end();
+                    }).catch(error => {
+                        let errorData = error.response.data;
+                        response.writeHead(200, {'Content-Type': 'text/html'});
+                        response.write(errorData.status + ': ' + errorData.reason);
+                        response.end();
+                    });
             }).listen(port);
 
             console.log('Server running at port: ' + port);
