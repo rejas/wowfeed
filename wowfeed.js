@@ -35,7 +35,7 @@ const fs    = require('fs'),
                         guild: urlParts.query.guild,
                         realm: urlParts.query.realm,
                         region: urlParts.query.region,
-                        showSteps: urlParts.query.steps !== 'false',
+                        showSteps: urlParts.query.showSteps !== 'false',
                         maxItems: urlParts.query.maxItems || 20
                     };
 
