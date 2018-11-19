@@ -10,7 +10,7 @@
     "url": "https://github.com/rejas"
   },
   "dependencies": {
-    "blizzard.js": "^2.3.1",
+    "blizzard.js": "^2.3.2",
     "rss": "^1.2.2",
     "universal-analytics": "^0.4.20"
   },
