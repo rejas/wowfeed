@@ -1,6 +1,6 @@
 {
   "name": "wowfeed",
-  "version": "0.9.9",
+  "version": "1.0.0",
   "description": "rss feed generator for the world of warcraft armory",
   "homepage": "https://wowfeed.herokuapp.com/",
   "license": "MIT",
