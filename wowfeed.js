@@ -42,7 +42,7 @@ const fs    = require('fs'),
                 // Check if all mandatory options are there
                 if (!options.region || !options.realm || !(options.character || options.guild)) {
                     analytics.pageview('index').send();
-                    wowfeed.writeErrorPage(response);
+                    this.writeErrorPage(response);
                     return;
                 }
 
