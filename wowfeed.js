@@ -38,11 +38,11 @@ const fs    = require('fs'),
                     response.end();
                 }).catch(error => {
                     console.log(error);
-                let errorData = error.response.data;
-                response.writeHead(200, {'Content-Type': 'text/html'});
-                response.write(errorData.status + ': ' + errorData.reason);
-                response.end();
-            });
+                    let errorData = error.response.data;
+                    response.writeHead(200, {'Content-Type': 'text/html'});
+                    response.write(errorData.status + ': ' + errorData.reason);
+                    response.end();
+                });
         },
 
         initialize: () => {
