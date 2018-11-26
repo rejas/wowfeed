@@ -42,7 +42,7 @@ const fs    = require('fs'),
                 // Check if all mandatory options are there
                 if (!options.region || !options.realm || !(options.character || options.guild)) {
                     analytics.pageview('index').send();
-                    wowfeed.writeErrorPage(response);
+                    this.writeErrorPage(response);
                     return;
                 }
 
@@ -63,7 +63,7 @@ const fs    = require('fs'),
                     .then(feed => {
                         // Tell the client that return value is of rss type
                         response.writeHead(200, {'Content-Type': 'application/rss+xml'});
-                        response.write(feed.xml());
+                        response.write(feed.rss2());
                         response.end();
                     }).catch(error => {
                         let errorData = error.response.data;
