@@ -37,7 +37,6 @@ const fs    = require('fs'),
                     response.write(feed.rss2());
                     response.end();
                 }).catch(error => {
-                    console.log(error);
                     let errorData = error.response.data;
                     response.writeHead(200, {'Content-Type': 'text/html'});
                     response.write(errorData.status + ': ' + errorData.reason);
