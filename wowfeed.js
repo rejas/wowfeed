@@ -12,13 +12,35 @@ const fs    = require('fs'),
          * Tell the client the search params were not correct
          * @param response
          */
-        writeErrorPage: (response) => {
+        createErrorPage: (response) => {
             fs.readFile('./docs/index.html', 'binary', (err, file) => {
                 if (err) {
                     console.log(err);
                 }
                 response.writeHead(200);
                 response.write(file, 'binary');
+                response.end();
+            });
+        },
+
+        /**
+         *
+         * @param response
+         * @param options
+         */
+        createFeed: (response, options) => {
+            // Actually create the feed
+            app.createFeed(options)
+                .then(feed => {
+                    // Tell the client that return value is of rss type
+                    response.writeHead(200, {'Content-Type': 'application/rss+xml'});
+                    response.write(feed.rss2());
+                    response.end();
+                }).catch(error => {
+                    console.log(error);
+                let errorData = error.response.data;
+                response.writeHead(200, {'Content-Type': 'text/html'});
+                response.write(errorData.status + ': ' + errorData.reason);
                 response.end();
             });
         },
@@ -42,7 +64,7 @@ const fs    = require('fs'),
                 // Check if all mandatory options are there
                 if (!options.region || !options.realm || !(options.character || options.guild)) {
                     analytics.pageview('index').send();
-                    this.writeErrorPage(response);
+                    wowfeed.createErrorPage(response);
                     return;
                 }
 
@@ -59,18 +81,7 @@ const fs    = require('fs'),
                 }
 
                 // Actually create the feed
-                app.createFeed(options)
-                    .then(feed => {
-                        // Tell the client that return value is of rss type
-                        response.writeHead(200, {'Content-Type': 'application/rss+xml'});
-                        response.write(feed.rss2());
-                        response.end();
-                    }).catch(error => {
-                        let errorData = error.response.data;
-                        response.writeHead(200, {'Content-Type': 'text/html'});
-                        response.write(errorData.status + ': ' + errorData.reason);
-                        response.end();
-                    });
+                wowfeed.createFeed(response, options);
             }).listen(port);
 
             console.log('Server running at port: ' + port);
