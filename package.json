@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "eslint": "^5.10.0",
+    "eslint-plugin-promise": "^4.0.1",
     "nodemon": "^1.18.9"
   },
   "engines": {

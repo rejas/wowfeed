@@ -35,12 +35,12 @@ const fs    = require('fs'),
                     // Tell the client that return value is of rss type
                     response.writeHead(200, {'Content-Type': 'application/rss+xml'});
                     response.write(feed.rss2());
-                    response.end();
+                    return response.end();
                 }).catch(error => {
                     let errorData = error.response.data;
                     response.writeHead(200, {'Content-Type': 'text/html'});
                     response.write(errorData.status + ': ' + errorData.reason);
-                    response.end();
+                    return response.end();
                 });
         },
 
