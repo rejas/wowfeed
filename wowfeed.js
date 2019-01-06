@@ -3,8 +3,8 @@
 const fs    = require('fs'),
     http    = require('http'),
     url     = require('url'),
-    app     = require('./lib/app.js'),
     ua      = require('universal-analytics'),
+    app     = require('./lib/app.js'),
     port    = process.env.PORT || 3000,
     wowfeed = {
 
@@ -12,7 +12,7 @@ const fs    = require('fs'),
          * Tell the client the search params were not correct
          * @param response
          */
-        createErrorPage: (response) => {
+        createIndexPage: (response) => {
             fs.readFile('./docs/index.html', 'binary', (err, file) => {
                 if (err) {
                     console.log(err);
@@ -24,24 +24,23 @@ const fs    = require('fs'),
         },
 
         /**
-         *
+         * Tell the client that return value is of rss type
          * @param response
-         * @param options
          */
-        createFeed: (response, options) => {
-            // Actually create the feed
-            app.createFeed(options)
-                .then(feed => {
-                    // Tell the client that return value is of rss type
-                    response.writeHead(200, {'Content-Type': 'application/rss+xml'});
-                    response.write(feed.rss2());
-                    return response.end();
-                }).catch(error => {
-                    // Tell the client what the error is
-                    response.writeHead(200, {'Content-Type': 'text/html'});
-                    response.write(`Error: ${error.response.status} - ${error.response.statusText}`);
-                    return response.end();
-                });
+        createFeedPage: (response, feed) => {
+            response.writeHead(200, {'Content-Type': 'application/rss+xml'});
+            response.write(feed.rss2());
+            response.end();
+        },
+
+        /**
+         * Tell the client what the error is
+         * @param error
+         */
+        createErrorPage: (response, error) => {
+            response.writeHead(200, {'Content-Type': 'text/html'});
+            response.write(`Error: ${error.response.status} - ${error.response.statusText}`);
+            response.end();
         },
 
         initialize: () => {
@@ -63,7 +62,7 @@ const fs    = require('fs'),
                 // Check if all mandatory options are there
                 if (!options.region || !options.realm || !(options.character || options.guild)) {
                     analytics.pageview('index').send();
-                    wowfeed.createErrorPage(response);
+                    wowfeed.createIndexPage(response);
                     return;
                 }
 
@@ -72,15 +71,25 @@ const fs    = require('fs'),
                     options.realm = options.realm.replace('\'', '');
                 }
 
-                // Send analytics events
-                if (options.character) {
-                    analytics.pageview(`character/${options.region}/${options.realm}/${options.character}`).send();
-                } else if (options.guild) {
-                    analytics.pageview(`guild/${options.region}/${options.realm}/${options.guild}`).send();
-                }
-
                 // Actually create the feed
-                wowfeed.createFeed(response, options);
+                app.createFeed(options)
+                    .then(feed => {
+                        // Send analytics events
+                        if (options.character) {
+                            analytics.pageview(`character/${options.region}/${options.realm}/${options.character}`).send();
+                        } else if (options.guild) {
+                            analytics.pageview(`guild/${options.region}/${options.realm}/${options.guild}`).send();
+                        }
+                        return wowfeed.createFeedPage(response, feed);
+                    })
+                    .catch(error => {
+                        // Send analytics exception
+                        analytics.exception({
+                            dp: request.url,
+                            exd: `${error.response.status} - ${error.response.statusText}`
+                        }).send();
+                        wowfeed.createErrorPage(response, error);
+                    });
             }).listen(port);
 
             console.log('Server running at port: ' + port);
