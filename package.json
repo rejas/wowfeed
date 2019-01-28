@@ -1,6 +1,6 @@
 {
   "name": "wowfeed",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "rss feed generator for the world of warcraft armory",
   "homepage": "https://wowfeed.herokuapp.com/",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "universal-analytics": "^0.4.20"
   },
   "devDependencies": {
-    "eslint": "^5.11.1",
+    "eslint": "^5.12.1",
     "eslint-plugin-promise": "^4.0.1",
     "nodemon": "^1.18.9"
   },
@@ -26,6 +26,7 @@
     "eslint": "eslint *.js lib/*.js",
     "eslint:fix": "eslint --fix *.js lib/*.js",
     "start": "nodemon %NODE_DEBUG_OPTION% wowfeed.js",
-    "test": "npm run eslint"
+    "test": "npm run eslint",
+    "update": "npx npm-check -u"
   }
 }
