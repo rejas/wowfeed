@@ -15,7 +15,7 @@
     "universal-analytics": "^0.4.20"
   },
   "devDependencies": {
-    "eslint": "^5.15.3",
+    "eslint": "^5.16.0",
     "eslint-plugin-promise": "^4.0.1",
     "nodemon": "^1.18.10"
   },
