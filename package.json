@@ -13,7 +13,8 @@
   "dependencies": {
     "blizzard.js": "^3.0.0",
     "feed": "^2.0.4",
-    "universal-analytics": "^0.4.20"
+    "universal-analytics": "^0.4.20",
+    "snyk": "^1.162.0"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
@@ -31,6 +32,9 @@
   "scripts": {
     "start": "nodemon %NODE_DEBUG_OPTION% wowfeed.js",
     "test": "eslint *.js lib/*.js",
-    "test:fix": "eslint --fix *.js lib/*.js"
-  }
+    "test:fix": "eslint --fix *.js lib/*.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
