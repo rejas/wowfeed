@@ -17,8 +17,8 @@
   },
   "devDependencies": {
     "eslint": "^5.16.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "nodemon": "^1.18.10"
+    "eslint-plugin-promise": "^4.1.1",
+    "nodemon": "^1.19.0"
   },
   "engines": {
     "node": ">=6"
