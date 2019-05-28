@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "blizzard.js": "^3.0.0",
-    "feed": "^2.0.4",
+    "feed": "^3.0.0",
     "universal-analytics": "^0.4.20"
   },
   "devDependencies": {
