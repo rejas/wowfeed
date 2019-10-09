@@ -1,7 +1,7 @@
 wowfeed
 ========
 
-[![Build Status](https://secure.travis-ci.org/rejas/wowfeed.png?branch=master)](https://travis-ci.org/rejas/wowfeed) [![Greenkeeper badge](https://badges.greenkeeper.io/rejas/wowfeed.svg)](https://greenkeeper.io/)
+[![Build Status](https://secure.travis-ci.org/rejas/wowfeed.png?branch=master)](https://travis-ci.org/rejas/wowfeed)
 
 wow rss feed generator
 
