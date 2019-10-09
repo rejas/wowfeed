@@ -11,14 +11,14 @@
     "url": "https://github.com/rejas"
   },
   "dependencies": {
-    "blizzard.js": "^3.1.0",
-    "feed": "^3.0.0",
+    "blizzard.js": "^3.2.0",
+    "feed": "^4.0.0",
     "universal-analytics": "^0.4.20"
   },
   "devDependencies": {
-    "eslint": "^6.0.0",
-    "eslint-plugin-promise": "^4.1.1",
-    "nodemon": "^1.19.1"
+    "eslint": "^6.5.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "nodemon": "^1.19.3"
   },
   "engines": {
     "node": ">=8"
@@ -29,7 +29,7 @@
     "rss feed"
   ],
   "scripts": {
-    "start": "nodemon %NODE_DEBUG_OPTION% wowfeed.js",
+    "start": "nodemon wowfeed.js",
     "test": "eslint *.js lib/*.js",
     "test:fix": "eslint --fix *.js lib/*.js"
   }

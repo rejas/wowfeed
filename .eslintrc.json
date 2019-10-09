@@ -1,11 +1,14 @@
 {
+  "extends": ["eslint:recommended","plugin:promise/recommended"],
   "env": {
     "browser": true,
-    "node": true,
-    "es6": true
+    "es6": true,
+    "node": true
   },
-  "extends": ["eslint:recommended","plugin:promise/recommended"],
   "plugins": ["promise"],
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
   "rules": {
     "no-console": 0,
     "indent": [
