@@ -12,16 +12,16 @@
   },
   "dependencies": {
     "blizzard.js": "^3.2.0",
-    "feed": "^4.0.0",
+    "feed": "^4.1.0",
     "universal-analytics": "^0.4.20"
   },
   "devDependencies": {
-    "eslint": "^6.5.1",
+    "eslint": "^6.8.0",
     "eslint-plugin-promise": "^4.2.1",
-    "nodemon": "^1.19.3"
+    "nodemon": "^2.0.2"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "keywords": [
     "blizzard",
