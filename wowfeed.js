@@ -39,7 +39,8 @@ const fs    = require('fs'),
          */
         createErrorPage: (response, error) => {
             response.writeHead(200, {'Content-Type': 'text/html'});
-            response.write(`Error: ${error.response.status} - ${error.response.statusText}`);
+            response.write(`<h2>Ups, something went wrong:</h2>`);
+            response.write(`<code><pre>${error.stack}</pre></code>`);
             response.end();
         },
 
@@ -88,7 +89,7 @@ const fs    = require('fs'),
                     // Send analytics exception
                     analytics.exception({
                         dp: request.url,
-                        exd: `${error.response.status} - ${error.response.statusText}`
+                        exd: `${error.message}`
                     }).send();
 
                     wowfeed.createErrorPage(response, error);
