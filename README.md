@@ -1,7 +1,7 @@
 wowfeed
 ========
 
-[![Build Status](https://secure.travis-ci.org/rejas/wowfeed.png?branch=master)](https://travis-ci.org/rejas/wowfeed)
+**DEPRECATED AND ABANDONED** since blizzard has removed the character news api 
 
 wow rss feed generator
 
